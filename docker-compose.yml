@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.6
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: pr0y3ct_ñ
+      POSTGRES_DB: proyecto_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Volumen persistente para los datos de PostgreSQL
+    networks:
+      - postgres_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: jota.gvg@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: pr0y3ct
+    ports:
+      - "80:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin  # Volumen persistente para los datos de pgAdmin
+    depends_on:
+      - postgres
+    networks:
+      - postgres_network
+
+volumes:
+  postgres_data:  # Volumen persistente para PostgreSQL
+  pgadmin_data:   # Volumen persistente para pgAdmin
+
+networks:
+  postgres_network:
+    driver: bridge
