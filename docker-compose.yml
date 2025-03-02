@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data  # Volumen persistente para los datos de PostgreSQL
+      - ./init.sql:/docker-entrypoint-initdb.d/query.sql
     networks:
       - postgres_network
 

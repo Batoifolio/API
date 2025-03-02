@@ -8,6 +8,12 @@
     docker compose down;
 ```
 
+# Recargar los volumenes
+```bash
+    docker compose down -v;
+    docker compose up -d;
+```
+
 # Eliminar los volumenes 
 ```bash
     docker compose down;
