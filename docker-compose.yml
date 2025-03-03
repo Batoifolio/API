@@ -11,10 +11,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Volumen persistente para los datos de PostgreSQL
-      - ./init.sql:/docker-entrypoint-initdb.d/query.sql
+      - postgres_data:/var/lib/postgresql/data # Volumen persistente para los datos de PostgreSQL
+      - ./db/init.sql:/docker-entrypoint-initdb.d/query.sql
     networks:
-      - postgres_network
+      - app_network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -23,18 +23,32 @@ services:
       PGADMIN_DEFAULT_EMAIL: jota.gvg@gmail.com
       PGADMIN_DEFAULT_PASSWORD: pr0y3ct
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - pgadmin_data:/var/lib/pgadmin  # Volumen persistente para los datos de pgAdmin
+      - pgadmin_data:/var/lib/pgadmin # Volumen persistente para los datos de pgAdmin
     depends_on:
       - postgres
     networks:
-      - postgres_network
+      - app_network
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+      - "9229:9229" # Debugging con --inspect
+    volumes:
+      - .:/app
+      - /app/node_modules # Evita conflictos con dependencias locales
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    command: npm run dev
 
 volumes:
-  postgres_data:  # Volumen persistente para PostgreSQL
-  pgadmin_data:   # Volumen persistente para pgAdmin
+  postgres_data: # Volumen persistente para PostgreSQL
+  pgadmin_data:
+    # Volumen persistente para pgAdmin
 
 networks:
-  postgres_network:
+  app_network:
     driver: bridge

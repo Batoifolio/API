@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Docker: Attach to Node",
+            "type": "node",
+            "request": "attach",
+            "restart": true,
+            "protocol": "inspector",
+            "port": 9229,
+            "timeout": 10000,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/app",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}
