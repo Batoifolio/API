@@ -22,6 +22,15 @@ case $1 in
             bash $commands/reload.sh;
         fi
         ;;
+    -shell)
+        bash $commands/shell.sh;
+        ;;
+    -log)
+        bash $commands/log.sh;
+        ;;
+    -help)
+        bash $commands/help.sh;
+        ;;
     *)
         clear;
         echo "Opcion no valida";

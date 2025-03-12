@@ -53,39 +53,46 @@ Esta configurado para que cuando se guarde un archivo .ts se ejecute el script:
 ---
 
 
-# Comando Rapidos:
+# Comando Batoifolio:
 > [!NOTE]  
 > Estos comando se han centralizado, ya que facilitan el uso de la aplicacion a nivel de desarollo.
 ## Iniciar Proyecto
 ```bash
     bash app.sh -init
 ```
+o
+```bash
+    batoifolio -init
+```
+En caso que no sea la primera vez que inicias el proyecto de esta forma.
+
+Aparte de inicializar el proyecto, carga un alias `batoifolio` en el archivo `.bashrc`. En caso de borrar el proyecto, sería conveniente usar un comando que esté proporcionado aquí o eliminar ese alias.
 
 ## Ejecutar Docker
 ```bash
-    bash app.sh -run
+    batoifolio -run
 ```
 
 ## Parar Contenedores
 ```bash
-    bash app.sh -stop
+    batoifolio -stop
 ```
 
 ## Recargar contenedores
 > [!TIP]
 > Los comando de eliminar Volumenes o recargarlos, son utiles, ya que siempre que se recargen se pondra la base de datos en el estado que inicial estando en la path:`/db/init.sql`.
 ```bash
-    bash app.sh -reload
+    batoifolio -reload
 ```
 
 ### Recargar Volumenes
 ```bash
-    bash app.sh -reload -v
+    batoifolio -reload -v
 ```
 
 ## Purgar TODO Docker
 > [!CAUTION]
 > Este comando eliminará todos los contenedores, imágenes y volúmenes de Docker, TODOS TODOS, no solo los de este proyecto.
 ```bash
-    bash app.sh -purge
+    batoifolio -purge
 ```
