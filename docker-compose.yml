@@ -4,10 +4,8 @@ services:
   postgres:
     image: postgres:16.6
     container_name: postgres_db
-    environment:
-      POSTGRES_USER: backend
-      POSTGRES_PASSWORD: pr0y3ct_ñ
-      POSTGRES_DB: proyecto_db
+    env_file:
+      - .env.local
     ports:
       - "5432:5432"
     volumes:
@@ -19,9 +17,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: jota.gvg@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: pr0y3ct
+    env_file:
+      - .env.local
     ports:
       - "8080:80"
     volumes:
@@ -39,9 +36,8 @@ services:
     volumes:
       - .:/app
       - /app/node_modules # Evita conflictos con dependencias locales
-    environment:
-      - NODE_ENV=development
-      - PORT=3000
+    env_file:
+      - .env.local
     networks:
       - app_network
     command: npm run dev
