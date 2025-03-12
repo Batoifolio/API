@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Docker: Attach to Node",
+            "name": "Docker: API-REST",
             "type": "node",
             "request": "attach",
             "restart": true,
