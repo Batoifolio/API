@@ -1,26 +1,22 @@
-import express from 'express'
-import client from './db/client'
+import express, { Application } from 'express'
+import morgan from 'morgan'
+import cors from 'cors'
+import { json, urlencoded } from 'body-parser'
+import routes from './routes' // Importar el archivo de rutas
+import { globals } from './config/globals'
 
-const app = express()
-app.use(express.json())
+const app: Application = express()
 
-const PORT = process.env.PORT ?? 3000
+// Variables globales para la app
+app.locals = globals
 
-app.get('/', (_req, res) => {
-  res.send('Hello World')
-})
+// Middlewares
+app.use(morgan('dev'))
+app.use(cors())
+app.use(json())
+app.use(urlencoded({ extended: true }))
 
-app.get('/data', async (_req, res) => {
-  try {
-    const result = await client.query('SELECT * FROM usuario;')
-    res.json(result.rows)
-  } catch (err) {
-    res.status(500).json({ error: 'Error al obtener los datos' })
-  } finally {
-    // Asegúrate de cerrar la conexión después de la consulta
-  }
-})
+// Usar las rutas centralizadas
+app.use(routes)
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`)
-})
+export default app
