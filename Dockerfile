@@ -11,6 +11,9 @@ RUN npm install
 # Copia el resto del código de la aplicación
 COPY . .
 
+# Crea el directorio de logs y el archivo de logs vacío con permisos adecuados
+RUN mkdir -p /app/logs && chmod 777 /app/logs && touch /app/logs/logs.log && chmod 666 /app/logs/logs.log
+
 # Expone el puerto que usa la API
 EXPOSE 3000
 

@@ -1,5 +1,5 @@
 import { Client } from 'pg'
-import { IDatabaseClient } from './interfaces'
+import { IDatabaseClient } from './client.interface'
 import dotenv from 'dotenv'
 dotenv.config({ path: '/.env.local' })
 
