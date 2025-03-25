@@ -1,12 +1,13 @@
 import { Router } from 'express'
-// import userRoutes from './modules/users/routes/user.routes';
 // Importar más rutas de módulos aquí
+import usuarioRouter from './modules/usuario/routes/usuario.routes'
 
 const router = Router()
 
 // Ruta test
-router.get('/', (_req, res) => {
+router.get('/', (req, res) => {
   res.send('Hello World')
+  req.app.locals.log('info', 'Hello World')
 })
 
 router.get('/data', async (req, res) => {
@@ -16,7 +17,6 @@ router.get('/data', async (req, res) => {
 
 // Registrar rutas de módulos
 //* Rutas para api
-
-// router.use('/api/users', userRoutes);
+router.use('/api/users', usuarioRouter)
 
 export default router

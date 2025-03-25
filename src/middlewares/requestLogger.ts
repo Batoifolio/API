@@ -1,10 +1,9 @@
 import morgan, { TokenIndexer } from 'morgan'
 import { Request, Response } from 'express'
-import { formatStringOrUndefined } from '../utils/functions'
-import { log } from '../utils/fileLogger'
+import { formatStringOrUndefined } from '../utils/formating'
 
-import fs from 'fs'
-const fileToLog = '../logs/logs.log'
+// import fs from 'fs'
+// const fileToLog = '../logs/logs.log'
 
 // Formato personalizado para los logs
 const formatLogger = (tokens: TokenIndexer<Request, Response>, req: Request, res: Response): string => {
@@ -13,8 +12,7 @@ const formatLogger = (tokens: TokenIndexer<Request, Response>, req: Request, res
   const path = formatStringOrUndefined(tokens.url(req, res)) // Ruta solicitada
   const status = formatStringOrUndefined(tokens.status(req, res)) // Código de estado HTTP
   const responseTime = formatStringOrUndefined(tokens['response-time'](req, res)) // Tiempo de respuesta
-  log('info', 'message')
-  fs.appendFileSync(fileToLog, `[${date}] [${method}] path: "${path}" code: "${status}" time: "${responseTime}ms"}\n`)
+  // fs.appendFileSync(fileToLog, `[${date}] [${method}] path: "${path}" code: "${status}" time: "${responseTime}ms"}\n`)
   return `[${date}] [${method}] path: "${path}" code: "${status}" time: "${responseTime}ms"}`
 }
 

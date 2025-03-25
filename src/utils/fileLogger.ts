@@ -1,5 +1,5 @@
 import winston from 'winston'
-import { formatStringOrUndefined } from '../utils/functions'
+import { formatStringOrUndefined } from './formating'
 
 const fileToLog = '../logs/logs.log'
 
@@ -22,4 +22,6 @@ const logger = winston.createLogger({
  */
 export const log = (level: 'info' | 'warn' | 'error', message: string): void => {
   logger.log({ level, message })
+  const date = new Date().toISOString()
+  console.log(`[${date}] [${level.toUpperCase()}] ${message}`)
 }
