@@ -35,7 +35,7 @@ CREATE TABLE "empresa" (
     "borrado" BOOLEAN DEFAULT false
 );
 
-CREATE TABLE "usuario" (
+CREATE TABLE "Users" (
     "id" integer PRIMARY KEY,
     "nombre" VARCHAR(100),
     "apellidos" VARCHAR(100),
@@ -60,21 +60,21 @@ CREATE TABLE "usuario" (
 
 CREATE TABLE "refresh_token" (
     "id" integer PRIMARY KEY,
-    "usuario_id" integer,
+    "Users_id" integer,
     "token" TEXT NOT NULL,
     "ip_access" TEXT,
     "user_agent" TEXT
 );
 
-CREATE TABLE "usuario_preferencia" (
-    "usuario_id" integer,
+CREATE TABLE "Users_preferencia" (
+    "Users_id" integer,
     "preferencia_id" integer,
     "borrado" BOOLEAN DEFAULT false
 );
 
 CREATE TABLE "publicacion" (
     "id" integer PRIMARY KEY,
-    "usuario_id" integer,
+    "Users_id" integer,
     "contenido" text,
     "creado_en" timestamp DEFAULT (now()),
     "borrado" BOOLEAN DEFAULT false
@@ -89,8 +89,8 @@ CREATE TABLE "imagen_publicacion" (
 
 CREATE TABLE "bloqueos" (
     "id" integer PRIMARY KEY,
-    "usuario_id" integer,
-    "usuario_bloqueado_id" integer,
+    "Users_id" integer,
+    "Users_bloqueado_id" integer,
     "fecha_bloqueado" TIMESTAMP DEFAULT (now()),
     "fecha_desbloqueado" TIMESTAMP DEFAULT (now()),
     "borrado" BOOLEAN DEFAULT false
@@ -98,8 +98,8 @@ CREATE TABLE "bloqueos" (
 
 CREATE TABLE "peticion_segimiento" (
     "id" integer PRIMARY KEY,
-    "usuario_origen" integer,
-    "usuario_destino" integer,
+    "Users_origen" integer,
+    "Users_destino" integer,
     "estado" text,
     "creado_en" timestamp DEFAULT (now()),
     "borrado" BOOLEAN DEFAULT false
@@ -107,8 +107,8 @@ CREATE TABLE "peticion_segimiento" (
 
 CREATE TABLE "conversacion" (
     "id" integer PRIMARY KEY,
-    "usuario1_id" integer,
-    "usuario2_id" integer,
+    "Users1_id" integer,
+    "Users2_id" integer,
     "creado_en" TIMESTAMP DEFAULT (now()),
     "borrado" BOOLEAN DEFAULT false
 );
@@ -123,47 +123,47 @@ CREATE TABLE "mensaje" (
     "borrado" BOOLEAN DEFAULT false
 );
 
-CREATE UNIQUE INDEX ON "usuario_preferencia" ("usuario_id", "preferencia_id");
+CREATE UNIQUE INDEX ON "Users_preferencia" ("Users_id", "preferencia_id");
 
 CREATE INDEX "idx_publicacion" ON "imagen_publicacion" ("publicacion_id");
 
-CREATE UNIQUE INDEX ON "bloqueos" ("usuario_id", "usuario_bloqueado_id");
+CREATE UNIQUE INDEX ON "bloqueos" ("Users_id", "Users_bloqueado_id");
 
-CREATE UNIQUE INDEX ON "conversacion" ("usuario1_id", "usuario2_id");
+CREATE UNIQUE INDEX ON "conversacion" ("Users1_id", "Users2_id");
 
-COMMENT ON COLUMN "rama"."id" IS 'Cuando se elimina un grado o usuario relacionado con esta rama, se impide la eliminación (Restrict)';
+COMMENT ON COLUMN "rama"."id" IS 'Cuando se elimina un grado o Users relacionado con esta rama, se impide la eliminación (Restrict)';
 
-COMMENT ON COLUMN "grado"."id" IS 'Cuando se elimina un usuario relacionado con este grado, se impide la eliminación (Restrict)';
+COMMENT ON COLUMN "grado"."id" IS 'Cuando se elimina un Users relacionado con este grado, se impide la eliminación (Restrict)';
 
 COMMENT ON COLUMN "preferencia"."id" IS 'Si se elimina una preferencia que aun esta asignada, se impide la eliminación';
 
 COMMENT ON COLUMN "rol"."id" IS 'Si se elimina un rol que aun esta asignada, se impide la eliminación';
 
-COMMENT ON COLUMN "empresa"."id" IS 'Si se elimina una empresa, se elimina en cascada el usuario asociado';
+COMMENT ON COLUMN "empresa"."id" IS 'Si se elimina una empresa, se elimina en cascada el Users asociado';
 
-COMMENT ON COLUMN "usuario"."estado" IS 'Ej: en línea, ocupado, desconectado';
+COMMENT ON COLUMN "Users"."estado" IS 'Ej: en línea, ocupado, desconectado';
 
-COMMENT ON COLUMN "usuario"."rol_id" IS 'Cuando se elimina un rol, que aun esta asignada, se impide la eliminación';
+COMMENT ON COLUMN "Users"."rol_id" IS 'Cuando se elimina un rol, que aun esta asignada, se impide la eliminación';
 
-COMMENT ON COLUMN "usuario"."empresa_id" IS 'Puede ser null, Si se elimina una empresa, se elimina en cascada el usuario asociado';
+COMMENT ON COLUMN "Users"."empresa_id" IS 'Puede ser null, Si se elimina una empresa, se elimina en cascada el Users asociado';
 
-COMMENT ON COLUMN "usuario"."grado_id" IS 'Cuando se elimina un grado, que aun esta asignada, se impide la eliminación';
+COMMENT ON COLUMN "Users"."grado_id" IS 'Cuando se elimina un grado, que aun esta asignada, se impide la eliminación';
 
-COMMENT ON COLUMN "usuario"."rama_id" IS 'Cuando se elimina un rama, que aun esta asignada, se impide la eliminación';
+COMMENT ON COLUMN "Users"."rama_id" IS 'Cuando se elimina un rama, que aun esta asignada, se impide la eliminación';
 
-COMMENT ON COLUMN "refresh_token"."usuario_id" IS 'Si se elimina un usuario, se elimina en cascada su token';
+COMMENT ON COLUMN "refresh_token"."Users_id" IS 'Si se elimina un Users, se elimina en cascada su token';
 
-COMMENT ON COLUMN "usuario_preferencia"."usuario_id" IS 'Si se elimina el usuario, se elimina en cascada la relación';
+COMMENT ON COLUMN "Users_preferencia"."Users_id" IS 'Si se elimina el Users, se elimina en cascada la relación';
 
-COMMENT ON COLUMN "usuario_preferencia"."preferencia_id" IS 'Si se elimina la preferencia, se impide la eliminación (Restrict)';
+COMMENT ON COLUMN "Users_preferencia"."preferencia_id" IS 'Si se elimina la preferencia, se impide la eliminación (Restrict)';
 
-COMMENT ON COLUMN "publicacion"."usuario_id" IS 'Si se elimina el usuario, se eliminan en cascada las publicaciones asociadas';
+COMMENT ON COLUMN "publicacion"."Users_id" IS 'Si se elimina el Users, se eliminan en cascada las publicaciones asociadas';
 
 COMMENT ON COLUMN "imagen_publicacion"."publicacion_id" IS 'Si se elimina la publicación, se eliminan en cascada las imágenes asociadas';
 
-COMMENT ON COLUMN "peticion_segimiento"."usuario_origen" IS 'Si se elimina el usuario, se eliminan en cascada las peticion_segimientoes asociadas';
+COMMENT ON COLUMN "peticion_segimiento"."Users_origen" IS 'Si se elimina el Users, se eliminan en cascada las peticion_segimientoes asociadas';
 
-COMMENT ON COLUMN "peticion_segimiento"."usuario_destino" IS 'Si se elimina el usuario, se eliminan en cascada las peticion_segimientoes asociadas';
+COMMENT ON COLUMN "peticion_segimiento"."Users_destino" IS 'Si se elimina el Users, se eliminan en cascada las peticion_segimientoes asociadas';
 
 COMMENT ON COLUMN "peticion_segimiento"."estado" IS 'Pendiente, Aceptada, Rechazada';
 
@@ -172,45 +172,45 @@ COMMENT ON COLUMN "mensaje"."estado" IS 'Ej: enviado, entregado, leído';
 ALTER TABLE
     "refresh_token"
 ADD
-    FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
-    "usuario_preferencia"
+    "Users_preferencia"
 ADD
-    FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
-
-ALTER TABLE
-    "peticion_segimiento"
-ADD
-    FOREIGN KEY ("usuario_origen") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
     "peticion_segimiento"
 ADD
-    FOREIGN KEY ("usuario_destino") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users_origen") REFERENCES "Users" ("id") ON DELETE CASCADE;
+
+ALTER TABLE
+    "peticion_segimiento"
+ADD
+    FOREIGN KEY ("Users_destino") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
     "publicacion"
 ADD
-    FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
-    "usuario"
+    "Users"
 ADD
     FOREIGN KEY ("grado_id") REFERENCES "grado" ("id") ON DELETE RESTRICT;
 
 ALTER TABLE
-    "usuario"
+    "Users"
 ADD
     FOREIGN KEY ("rama_id") REFERENCES "rama" ("id") ON DELETE RESTRICT;
 
 ALTER TABLE
-    "usuario"
+    "Users"
 ADD
     FOREIGN KEY ("rol_id") REFERENCES "rol" ("id") ON DELETE RESTRICT;
 
 ALTER TABLE
-    "usuario_preferencia"
+    "Users_preferencia"
 ADD
     FOREIGN KEY ("preferencia_id") REFERENCES "preferencia" ("id") ON DELETE RESTRICT;
 
@@ -222,12 +222,12 @@ ADD
 ALTER TABLE
     "conversacion"
 ADD
-    FOREIGN KEY ("usuario1_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users1_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
     "conversacion"
 ADD
-    FOREIGN KEY ("usuario2_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users2_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
     "mensaje"
@@ -237,17 +237,17 @@ ADD
 ALTER TABLE
     "mensaje"
 ADD
-    FOREIGN KEY ("remitente_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("remitente_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
     "bloqueos"
 ADD
-    FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE
     "bloqueos"
 ADD
-    FOREIGN KEY ("usuario_bloqueado_id") REFERENCES "usuario" ("id") ON DELETE CASCADE;
+    FOREIGN KEY ("Users_bloqueado_id") REFERENCES "Users" ("id") ON DELETE CASCADE;
 -- Inserts 4 rows into all tables
 -- Insertar registros en la tabla rama
 INSERT INTO
@@ -321,7 +321,7 @@ VALUES
 INSERT INTO
     "rol" ("id", "nombre", "borrado")
 VALUES
-    (2, 'Usuario', false);
+    (2, 'Users', false);
 
 -- Insertar registros en la tabla empresa
 INSERT INTO
@@ -374,9 +374,9 @@ VALUES
         false
     );
 
--- Insertar registros en la tabla usuario
+-- Insertar registros en la tabla Users
 INSERT INTO
-    "usuario" (
+    "Users" (
         "id",
         "nombre",
         "apellidos",
@@ -492,7 +492,7 @@ VALUES
 INSERT INTO
     "refresh_token" (
         "id",
-        "usuario_id",
+        "Users_id",
         "token",
         "ip_access",
         "user_agent"
@@ -503,9 +503,9 @@ VALUES
     (3, 3, 'token3', '192.168.1.3', 'Mozilla/5.0'),
     (4, 4, 'token4', '192.168.1.4', 'Mozilla/5.0');
 
--- Insertar registros en la tabla usuario_preferencia
+-- Insertar registros en la tabla Users_preferencia
 INSERT INTO
-    "usuario_preferencia" ("usuario_id", "preferencia_id", "borrado")
+    "Users_preferencia" ("Users_id", "preferencia_id", "borrado")
 VALUES
     (1, 1, false),
     (2, 2, false),
@@ -516,7 +516,7 @@ VALUES
 INSERT INTO
     "publicacion" (
         "id",
-        "usuario_id",
+        "Users_id",
         "contenido",
         "creado_en",
         "borrado"
@@ -564,8 +564,8 @@ VALUES
 INSERT INTO
     "bloqueos" (
         "id",
-        "usuario_id",
-        "usuario_bloqueado_id",
+        "Users_id",
+        "Users_bloqueado_id",
         "fecha_bloqueado",
         "fecha_desbloqueado",
         "borrado"
@@ -608,8 +608,8 @@ VALUES
 INSERT INTO
     "peticion_segimiento" (
         "id",
-        "usuario_origen",
-        "usuario_destino",
+        "Users_origen",
+        "Users_destino",
         "estado",
         "creado_en",
         "borrado"
@@ -652,8 +652,8 @@ VALUES
 INSERT INTO
     "conversacion" (
         "id",
-        "usuario1_id",
-        "usuario2_id",
+        "Users1_id",
+        "Users2_id",
         "creado_en",
         "borrado"
     )

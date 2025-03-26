@@ -1,6 +1,6 @@
 import { Router } from 'express'
 // Importar más rutas de módulos aquí
-import usuarioRouter from '@modules/usuario/routes/usuario.routes'
+import UsersRouter from '@modules/users/routes/users.routes'
 
 const router = Router()
 
@@ -11,12 +11,12 @@ router.get('/', (req, res) => {
 })
 
 router.get('/data', async (req, res) => {
-  const data = await req.app.locals.db.query('SELECT * FROM usuario')
+  const data = await req.app.locals.db.query('SELECT * FROM Users')
   res.send(data)
 })
 
 // Registrar rutas de módulos
 //* Rutas para api
-router.use('/api/users', usuarioRouter)
+router.use('/api/users', UsersRouter)
 
 export default router
