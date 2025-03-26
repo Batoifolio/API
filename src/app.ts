@@ -1,9 +1,9 @@
 import express, { Application } from 'express'
-import requestLogger from './middlewares/requestLogger'
-import { globals } from './config/globals'
-import cors from 'cors'
 import { json, urlencoded } from 'body-parser'
-import routes from './routes'
+import cors from 'cors'
+import requestLogger from '@middlewares/requestLogger'
+import { globals } from '@config/globals'
+import routes from '@src/routes'
 
 const app: Application = express()
 
@@ -11,8 +11,6 @@ const app: Application = express()
 app.locals = globals
 
 // Middlewares
-
-// Middleware para manejar errores
 app.use(requestLogger)
 app.use(cors())
 app.use(json())

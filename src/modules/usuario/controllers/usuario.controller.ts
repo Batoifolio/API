@@ -1,4 +1,4 @@
-import { Controller } from '../../controller'
+import { Controller } from '../../baseController'
 
 export class UserController extends Controller {
   public getUser (_req: any, res: any): void {

@@ -1,5 +1,6 @@
-import app from './app'
+import 'module-alias/register'
 import dotenv from 'dotenv'
+import app from '@src/app'
 
 // Cargar variables de entorno
 dotenv.config()

@@ -1,6 +1,6 @@
 import morgan, { TokenIndexer } from 'morgan'
 import { Request, Response } from 'express'
-import { formatStringOrUndefined } from '../utils/formating'
+import { formatStringOrUndefined } from '@utils/formating'
 
 // import fs from 'fs'
 // const fileToLog = '../logs/logs.log'

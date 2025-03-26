@@ -103,6 +103,9 @@
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
     "baseUrl": "./src",
     "paths": {
+      "@src/*": [
+        "*"
+      ],
       "@middlewares/*": [
         "middlewares/*"
       ],
@@ -117,6 +120,9 @@
       ],
       "@enums/*": [
         "enums/*"
+      ],
+      "@logs/*": [
+        "logs/*"
       ],
       "@types/*": [
         "types/*"

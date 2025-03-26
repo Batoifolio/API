@@ -1,5 +1,5 @@
 import winston from 'winston'
-import { formatStringOrUndefined } from './formating'
+import { formatStringOrUndefined } from '@utils/formating'
 
 const fileToLog = '../logs/logs.log'
 

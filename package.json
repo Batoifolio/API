@@ -29,9 +29,9 @@
     "dotenv": "16.4.7",
     "express": "4.21.2",
     "fs": "0.0.1-security",
+    "module-alias": "2.2.3",
     "morgan": "1.10.0",
     "pg": "8.13.3",
-    "tsconfig-paths": "4.2.0",
     "winston": "3.17.0"
   },
   "eslintConfig": {
@@ -41,5 +41,15 @@
     "extends": [
       "./node_modules/ts-standard/eslintrc.json"
     ]
+  },
+  "_moduleAliases": {
+    "@src": "./src",
+    "@middlewares": "./src/middlewares",
+    "@config": "./src/config",
+    "@modules": "./src/modules",
+    "@utils": "./src/utils",
+    "@enums": "./src/enums",
+    "@logs": "./src/logs",
+    "@types": "./src/types"
   }
 }

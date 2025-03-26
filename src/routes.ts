@@ -1,6 +1,6 @@
 import { Router } from 'express'
 // Importar más rutas de módulos aquí
-import usuarioRouter from './modules/usuario/routes/usuario.routes'
+import usuarioRouter from '@modules/usuario/routes/usuario.routes'
 
 const router = Router()
 
