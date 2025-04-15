@@ -27,3 +27,127 @@ export abstract class Controller {
     })
   }
 }
+
+export interface User {
+  id: number
+  nombre: string
+  apellidos: string
+  username: string
+  email: string
+  password: string
+  fotoPerfil?: string
+  descripcion?: string
+  telefono: string
+  estado: string
+  ultimaConexion?: Date
+  rolId: number
+  empresaId?: number
+  buscaEmpresa: boolean
+  visibilidad: boolean
+  pueblo: string
+  gradoId: number
+  ramaId: number
+  creadoEn?: Date
+  borrado?: boolean
+}
+
+export interface UsersPreferencia {
+  userId: number
+  preferenciaId: number
+  borrado?: boolean
+}
+
+export interface Publicacion {
+  id: number
+  userId: number
+  contenido: string
+  creadoEn?: Date
+  borrado?: boolean
+}
+
+export interface ImagenPublicacion {
+  id: number
+  publicacionId: number
+  url: string
+  borrado?: boolean
+}
+
+export interface Bloqueo {
+  id: number
+  userId: number
+  userBloqueadoId: number
+  fechaBloqueado?: Date
+  fechaDesbloqueado?: Date
+  borrado?: boolean
+}
+
+export interface PeticionSeguimiento {
+  id: number
+  userOrigen: number
+  userDestino: number
+  estado: string
+  creadoEn?: Date
+  borrado?: boolean
+}
+
+export interface Conversacion {
+  id: number
+  user1Id: number
+  user2Id: number
+  creadoEn?: Date
+  borrado?: boolean
+}
+
+export interface Mensaje {
+  id: number
+  conversacionId: number
+  remitenteId: number
+  contenido: string
+  estado: string
+  creadoEn?: Date
+  borrado?: boolean
+}
+
+export interface RefreshToken {
+  id: number
+  userId: number
+  token: string
+  ipAccess?: string
+  userAgent?: string
+}
+
+export interface Preferencia {
+  id: number
+  nombre: string
+  borrado?: boolean
+}
+
+export interface Rama {
+  id: number
+  nombre: string
+  borrado?: boolean
+}
+
+export interface Grado {
+  id: number
+  nombre: string
+  borrado?: boolean
+}
+
+export interface Rol {
+  id: number
+  nombre: string
+  borrado?: boolean
+}
+
+export interface Empresa {
+  id: number
+  nombre: string
+  cif: string
+  direccion: string
+  sector: string
+  telefono: string
+  email: string
+  creadoEn?: Date
+  borrado?: boolean
+}

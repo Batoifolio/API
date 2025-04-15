@@ -10,7 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data # Volumen persistente para los datos de PostgreSQL
-      - ./db/init.sql:/docker-entrypoint-initdb.d/query.sql
+      # - ./db/init.sql:/docker-entrypoint-initdb.d/query.sql
     networks:
       - app_network
 
@@ -40,7 +40,8 @@ services:
       - .env.local
     networks:
       - app_network
-    command: npm run dev
+    command: sh -c "npx prisma db push && npx prisma generate && npm run dev"
+    # entrypoint: [ "/app/entrypoint.sh" ]
 
 volumes:
   postgres_data: # Volumen persistente para PostgreSQL

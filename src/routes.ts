@@ -1,6 +1,7 @@
 import { Router } from 'express'
 // Importar más rutas de módulos aquí
 import UsersRouter from '@modules/users/routes/users.routes'
+// import { main } from '@utils/seed'
 
 const router = Router()
 
@@ -13,6 +14,10 @@ router.get('/', (req, res) => {
 router.get('/data', async (req, res) => {
   const data = await req.app.locals.db.query('SELECT * FROM Users')
   res.send(data)
+})
+
+router.get('/seed', async (_req, _res) => {
+  // await main()
 })
 
 // Registrar rutas de módulos

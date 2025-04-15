@@ -1,0 +1,168 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Rama {
+  id      Int     @id
+  nombre  String
+  borrado Boolean @default(false)
+  Users   User[]
+}
+
+model Grado {
+  id      Int     @id
+  nombre  String
+  borrado Boolean @default(false)
+  Users   User[]
+}
+
+model Preferencia {
+  id      Int                @id
+  nombre  String
+  borrado Boolean            @default(false)
+  Users   UsersPreferencia[]
+}
+
+model Rol {
+  id      Int     @id
+  nombre  String
+  borrado Boolean @default(false)
+  Users   User[]
+}
+
+model Empresa {
+  id        Int      @id
+  nombre    String
+  cif       String   @unique
+  direccion String
+  sector    String
+  telefono  String
+  email     String
+  creadoEn  DateTime @default(now())
+  borrado   Boolean  @default(false)
+  Users     User[]
+}
+
+model User {
+  id                  Int                   @id @default(autoincrement())
+  nombre              String
+  apellidos           String
+  username            String                @unique
+  email               String                @unique
+  password            String
+  fotoPerfil          String?
+  descripcion         String?
+  telefono            String
+  estado              String                @default("desconectado")
+  ultimaConexion      DateTime?
+  rolId               Int
+  empresaId           Int?
+  buscaEmpresa        Boolean               @default(false)
+  visibilidad         Boolean               @default(true)
+  pueblo              String
+  gradoId             Int
+  ramaId              Int
+  creadoEn            DateTime              @default(now())
+  borrado             Boolean               @default(false)
+  RefreshTokens       RefreshToken[]
+  Preferencias        UsersPreferencia[]
+  Publicaciones       Publicacion[]
+  Bloqueos            Bloqueo[]             @relation("UserBloqueos")
+  Bloqueados          Bloqueo[]             @relation("UserBloqueados")
+  PeticionesEnviadas  PeticionSeguimiento[] @relation("UserPeticionesEnviadas")
+  PeticionesRecibidas PeticionSeguimiento[] @relation("UserPeticionesRecibidas")
+  Conversaciones1     Conversacion[]        @relation("UserConversaciones1")
+  Conversaciones2     Conversacion[]        @relation("UserConversaciones2")
+  Mensajes            Mensaje[]             @relation("UserMensajes")
+  Rama                Rama                  @relation(fields: [ramaId], references: [id], onDelete: Restrict)
+  Grado               Grado                 @relation(fields: [gradoId], references: [id], onDelete: Restrict)
+  Rol                 Rol                   @relation(fields: [rolId], references: [id], onDelete: Restrict)
+  Empresa             Empresa?              @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id        Int     @id
+  userId    Int
+  token     String
+  ipAccess  String?
+  userAgent String?
+  User      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UsersPreferencia {
+  userId        Int
+  preferenciaId Int
+  borrado       Boolean     @default(false)
+  User          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Preferencia   Preferencia @relation(fields: [preferenciaId], references: [id], onDelete: Restrict)
+
+  @@id([userId, preferenciaId])
+}
+
+model Publicacion {
+  id        Int                 @id
+  userId    Int
+  contenido String
+  creadoEn  DateTime            @default(now())
+  borrado   Boolean             @default(false)
+  User      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Imagenes  ImagenPublicacion[]
+}
+
+model ImagenPublicacion {
+  id            Int         @id
+  publicacionId Int
+  url           String
+  borrado       Boolean     @default(false)
+  Publicacion   Publicacion @relation(fields: [publicacionId], references: [id], onDelete: Cascade)
+}
+
+model Bloqueo {
+  id                Int      @id
+  userId            Int
+  userBloqueadoId   Int
+  fechaBloqueado    DateTime @default(now())
+  fechaDesbloqueado DateTime @default(now())
+  borrado           Boolean  @default(false)
+  User              User     @relation("UserBloqueos", fields: [userId], references: [id], onDelete: Cascade)
+  Bloqueado         User     @relation("UserBloqueados", fields: [userBloqueadoId], references: [id], onDelete: Cascade)
+}
+
+model PeticionSeguimiento {
+  id          Int      @id
+  userOrigen  Int
+  userDestino Int
+  estado      String
+  creadoEn    DateTime @default(now())
+  borrado     Boolean  @default(false)
+  UserOrigen  User     @relation("UserPeticionesEnviadas", fields: [userOrigen], references: [id], onDelete: Cascade)
+  UserDestino User     @relation("UserPeticionesRecibidas", fields: [userDestino], references: [id], onDelete: Cascade)
+}
+
+model Conversacion {
+  id       Int       @id
+  user1Id  Int
+  user2Id  Int
+  creadoEn DateTime  @default(now())
+  borrado  Boolean   @default(false)
+  User1    User      @relation("UserConversaciones1", fields: [user1Id], references: [id], onDelete: Cascade)
+  User2    User      @relation("UserConversaciones2", fields: [user2Id], references: [id], onDelete: Cascade)
+  Mensajes Mensaje[]
+}
+
+model Mensaje {
+  id             Int          @id
+  conversacionId Int
+  remitenteId    Int
+  contenido      String
+  estado         String       @default("enviado")
+  creadoEn       DateTime     @default(now())
+  borrado        Boolean      @default(false)
+  Conversacion   Conversacion @relation(fields: [conversacionId], references: [id], onDelete: Cascade)
+  Remitente      User         @relation("UserMensajes", fields: [remitenteId], references: [id], onDelete: Cascade)
+}
