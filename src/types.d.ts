@@ -151,3 +151,9 @@ export interface Empresa {
   creadoEn?: Date
   borrado?: boolean
 }
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: number
+  }
+}

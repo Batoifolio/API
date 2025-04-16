@@ -10,8 +10,4 @@ UsersRouter.get('/:id', userController.getUserById.bind(userController))
 // UsersRouter.put('/:id', userController.getUser.bind(userController))
 // UsersRouter.delete('/:id', userController.getUser.bind(userController))
 
-export default {
-  path: '/users',
-  router: UsersRouter,
-  authorized: true
-}
+export default UsersRouter

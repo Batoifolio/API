@@ -1,7 +1,12 @@
-import { Router } from 'express'
+import express, { Router } from 'express'
+import { baseModuleRouter } from '@src/types/baseModuleRouter'
+import { authMiddleware } from '@modules/auth/middlewares/auth.middleware'
+
 // Importar más rutas de módulos aquí
 import UsersRouter from '@modules/users/routes/users.routes'
-// import { main } from '@utils/seed'
+
+// Funcion para indexar las rutas de los módulos de foma centralizada
+const modules: [baseModuleRouter] = [UsersRouter]
 
 const router = Router()
 
@@ -11,17 +16,9 @@ router.get('/', (req, res) => {
   req.app.locals.log('info', 'Hello World')
 })
 
-router.get('/data', async (req, res) => {
-  const data = await req.app.locals.db.query('SELECT * FROM Users')
-  res.send(data)
-})
-
-router.get('/seed', async (_req, _res) => {
-  // await main()
-})
-
-// Registrar rutas de módulos
-//* Rutas para api
-router.use('/api/users', UsersRouter)
-
-export default router
+export const mountRoutes = (app: express.Application): void => {
+  for (const mod of modules) {
+    const middleware = mod.authorized ? [authMiddleware] : []
+    app.use(`/api${mod.path}`, ...middleware, mod.router)
+  }
+}

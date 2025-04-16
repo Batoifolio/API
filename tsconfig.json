@@ -131,6 +131,9 @@
       ]
     }
   },
+  "types": [
+    "node"
+  ],
   "skipLibCheck": true,
   "exclude": [
     "node_modules"
