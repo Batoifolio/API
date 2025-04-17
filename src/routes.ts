@@ -1,12 +1,11 @@
 import express, { Router } from 'express'
 import { baseModuleRouter } from '@src/types/baseModuleRouter'
-import { authMiddleware } from '@modules/auth/middlewares/auth.middleware'
 
-// Importar más rutas de módulos aquí
+// Importar rutas de los módulos
 import UsersRouter from '@modules/users/routes/users.routes'
 import RamasRouter from '@modules/ramas/routes/ramas.routes'
 
-// Funcion para indexar las rutas de los módulos de foma centralizada
+// Lista centralizada de módulos
 const modules: baseModuleRouter[] = [UsersRouter, RamasRouter]
 
 // Ruta test
@@ -18,10 +17,8 @@ router.get('/', (req, res) => {
 
 export const mountRoutes = (app: express.Application): void => {
   for (const mod of modules) {
-    const middleware = mod.authorized ? [authMiddleware] : []
-    app.use(`/api${mod.path}`, ...middleware, mod.router)
+    app.use(`/api${mod.path}`, mod.router)
   }
 
-  // Montar la ruta de prueba
   app.use('/', router)
 }

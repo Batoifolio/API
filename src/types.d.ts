@@ -179,3 +179,12 @@ export interface PaginationResult<T> {
   data: T[]
   pagination: Pagination
 }
+
+type Method = 'get' | 'post' | 'put' | 'delete' | 'patch'
+
+type BaseRouter = {
+  [K in Method]: (path: string, authorized: boolean, ...handlers: RequestHandler[]) => void
+} & {
+  use: Router['use']
+  router: Router
+}

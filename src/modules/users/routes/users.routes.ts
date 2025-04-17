@@ -1,17 +1,17 @@
-import { Router } from 'express'
+// import { Router } from 'express'
+import { createBaseRouter } from '@src/types/baseRouter'
 import { UsersController } from '../controllers/users.controller'
 
-const UsersRouter = Router()
+const usersRouter = createBaseRouter()
 const userController = new UsersController()
 
-UsersRouter.get('/', userController.getAllUsers.bind(userController))
-UsersRouter.get('/:id', userController.getUserById.bind(userController))
-// UsersRouter.post('/', userController.getUser.bind(userController))
-// UsersRouter.put('/:id', userController.getUser.bind(userController))
-// UsersRouter.delete('/:id', userController.getUser.bind(userController))
+usersRouter.get('/', true, userController.getAllUsers.bind(userController))
+usersRouter.get('/:id', true, userController.getUserById.bind(userController))
+// usersRouter.post('/', userController.getUser.bind(userController))
+// usersRouter.put('/:id', userController.getUser.bind(userController))
+// usersRouter.delete('/:id', userController.getUser.bind(userController))
 
 export default {
   path: '/users',
-  router: UsersRouter,
-  authorized: false
+  router: usersRouter.router
 }

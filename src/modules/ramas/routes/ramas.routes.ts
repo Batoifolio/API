@@ -1,17 +1,13 @@
-import { Router } from 'express'
+import { createBaseRouter } from '@src/types/baseRouter'
 import { RamasController } from '../controllers/ramas.controller'
 
-const RamasRouter = Router()
+const ramasRouter = createBaseRouter()
 const ramaController = new RamasController()
 
-RamasRouter.get('/', ramaController.getAllRamas.bind(ramaController))
-// RamasRouter.get('/:id', ramaController.getRamaById.bind(ramaController))
-// RamasRouter.post('/', ramaController.getRama.bind(ramaController))
-// RamasRouter.put('/:id', ramaController.getRama.bind(ramaController))
-// RamasRouter.delete('/:id', ramaController.getRama.bind(ramaController))
+ramasRouter.get('/', true, ramaController.getAllRamas.bind(ramaController))
+// ramasRouter.get('/:id', true, ramaController.getRamaById.bind(ramaController))
 
 export default {
   path: '/ramas',
-  router: RamasRouter,
-  authorized: false
+  router: ramasRouter.router
 }
