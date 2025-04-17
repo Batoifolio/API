@@ -13,5 +13,5 @@ UsersRouter.get('/:id', userController.getUserById.bind(userController))
 export default {
   path: '/users',
   router: UsersRouter,
-  authorized: true
+  authorized: false
 }

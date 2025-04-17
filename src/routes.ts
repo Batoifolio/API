@@ -8,9 +8,8 @@ import UsersRouter from '@modules/users/routes/users.routes'
 // Funcion para indexar las rutas de los módulos de foma centralizada
 const modules: [baseModuleRouter] = [UsersRouter]
 
-const router = Router()
-
 // Ruta test
+const router = Router()
 router.get('/', (req, res) => {
   res.send('Hello World')
   req.app.locals.log('info', 'Hello World')
@@ -21,4 +20,7 @@ export const mountRoutes = (app: express.Application): void => {
     const middleware = mod.authorized ? [authMiddleware] : []
     app.use(`/api${mod.path}`, ...middleware, mod.router)
   }
+
+  // Montar la ruta de prueba
+  app.use('/', router)
 }
