@@ -9,18 +9,9 @@ export class RamasController extends Controller {
   // Endpoint para obtener las ramas paginadas
   public getAllRamas = async (req: Request, res: Response): Promise<void> => {
     try {
-      if (req.query.page === undefined) {
-        req.query.page = '1'
-      }
-
-      if (req.query.limit === undefined) {
-        req.query.limit = '10'
-      }
-
-      const page = (parseInt(req.query.page as string) !== 0) ? parseInt(req.query.page as string) : 1
-      const limit = (parseInt(req.query.limit as string) !== 0) ? parseInt(req.query.limit as string) : 10
-
-      const { data, pagination } = await this.ramasService.getRamas(page, limit)
+      const queryPaginate = this.getQueryPaginate(req)
+      queryPaginate.where = { borrado: true }
+      const { data, pagination } = await this.ramasService.getRamas(queryPaginate)
 
       // Enviar la respuesta con paginación
       this.successResponse(res, data, 'Ramas obtenidas correctamente', 200, undefined, pagination)

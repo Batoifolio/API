@@ -1,4 +1,4 @@
-import { Pagination } from '@src/types'
+import { Pagination, QueryPaginate } from '@src/types'
 
 export abstract class Controller {
   /**
@@ -34,6 +34,23 @@ export abstract class Controller {
     }
 
     res.status(statusCode).json(response)
+  }
+
+  protected getQueryPaginate (req: any): QueryPaginate {
+    if (req.query.page === undefined) {
+      req.query.page = '1'
+    }
+
+    if (req.query.limit === undefined) {
+      req.query.limit = '10'
+    }
+
+    const page = (parseInt(req.query.page as string) !== 0) ? parseInt(req.query.page as string) : 1
+    const limit = (parseInt(req.query.limit as string) !== 0) ? parseInt(req.query.limit as string) : 10
+    return {
+      page,
+      limit
+    }
   }
 
   /**

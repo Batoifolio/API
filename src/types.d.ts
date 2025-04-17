@@ -158,8 +158,20 @@ declare module 'express-serve-static-core' {
   }
 }
 
+export interface QueryPaginate {
+  page: number
+  limit: number
+  orderBy?: object
+  where?: object
+}
+
 export interface Pagination {
   currentPage: number
   totalPages: number
   totalItems: number
+  limit: number
+}
+export interface PaginationResult<T> {
+  data: T[]
+  pagination: Pagination
 }
