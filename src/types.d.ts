@@ -161,8 +161,12 @@ declare module 'express-serve-static-core' {
 export interface QueryPaginate {
   page: number
   limit: number
-  orderBy?: object
-  where?: object
+}
+
+export interface PaginateOptions<T> {
+  queryPaginate?: QueryPaginate
+  getData: (skip: number, take: number) => Promise<T[]>
+  getTotal: () => Promise<number>
 }
 
 export interface Pagination {

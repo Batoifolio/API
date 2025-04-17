@@ -10,7 +10,6 @@ export class RamasController extends Controller {
   public getAllRamas = async (req: Request, res: Response): Promise<void> => {
     try {
       const queryPaginate = this.getQueryPaginate(req)
-      queryPaginate.where = { borrado: true }
       const { data, pagination } = await this.ramasService.getRamas(queryPaginate)
 
       // Enviar la respuesta con paginación
