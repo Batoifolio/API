@@ -157,3 +157,9 @@ declare module 'express-serve-static-core' {
     user?: number
   }
 }
+
+export interface Pagination {
+  currentPage: number
+  totalPages: number
+  totalItems: number
+}

@@ -4,9 +4,10 @@ import { authMiddleware } from '@modules/auth/middlewares/auth.middleware'
 
 // Importar más rutas de módulos aquí
 import UsersRouter from '@modules/users/routes/users.routes'
+import RamasRouter from '@modules/ramas/routes/ramas.routes'
 
 // Funcion para indexar las rutas de los módulos de foma centralizada
-const modules: [baseModuleRouter] = [UsersRouter]
+const modules: baseModuleRouter[] = [UsersRouter, RamasRouter]
 
 // Ruta test
 const router = Router()
