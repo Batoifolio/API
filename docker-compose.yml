@@ -40,7 +40,7 @@ services:
       - .env.local
     networks:
       - app_network
-    command: sh -c "npx prisma db push && npx prisma generate && npm run dev"
+    command: sh -c "./wait-for postgres:5432 -- npx prisma db push && npx prisma generate && npm run dev"
     # entrypoint: [ "/app/entrypoint.sh" ]
 
 volumes:
