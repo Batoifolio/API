@@ -13,7 +13,7 @@ export class RamasController extends Controller {
       const { data, pagination } = await this.ramasService.getRamas(queryPaginate)
 
       // Enviar la respuesta con paginación
-      this.successResponse(res, data, 'Ramas obtenidas correctamente', 200, undefined, pagination)
+      this.successResponse(req, res, data, 'Ramas obtenidas correctamente', 200, pagination)
     } catch (error) {
       this.errorResponse(res, 'Error al obtener ramas', 500)
     }

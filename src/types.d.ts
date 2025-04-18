@@ -1,3 +1,5 @@
+import { Router } from 'express'
+
 export abstract class Controller {
   /**
        * Envía una respuesta de éxito.
@@ -187,4 +189,14 @@ type BaseRouter = {
 } & {
   use: Router['use']
   router: Router
+}
+export interface baseRouterModule {
+  path: string
+  router: Router
+}
+
+export interface Error {
+  message: string
+  statusCode?: number
+  stack?: string
 }

@@ -1,13 +1,14 @@
-import { Router } from 'express'
-import { UsersController } from '@modules/users/controllers/users.controller'
+import { createBaseRouter } from '@src/types/baseRouter'
+import { AuthController } from '../controllers/auth.controller'
 
-const UsersRouter = Router()
-const userController = new UsersController()
+const authRouter = createBaseRouter()
+const authController = new AuthController()
 
-UsersRouter.get('/', userController.getAllUsers.bind(userController))
-UsersRouter.get('/:id', userController.getUserById.bind(userController))
-// UsersRouter.post('/', userController.getUser.bind(userController))
-// UsersRouter.put('/:id', userController.getUser.bind(userController))
-// UsersRouter.delete('/:id', userController.getUser.bind(userController))
+authRouter.post('/register', false, authController.register.bind(authController))
+// authRouter.get('/login', false, authController.login.bind(authController))
+// authRouter.get('/logout', true, authController.logout.bind(authController))
 
-export default UsersRouter
+export default {
+  path: '/',
+  router: authRouter.router
+}

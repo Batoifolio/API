@@ -1,26 +1,27 @@
-// import { PrismaClient } from '@prisma/client';
-// import { UserDTO } from '../dtos/users.dto';
+import { PrismaClient } from '@prisma/client'
+// import { UserDTO } from '../dtos/users.dto'
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-// export class UserRepository {
-//     public async getAllUsers(): Promise<UserDTO> {
-//         return prisma.user.findMany();
-//     }
+export class AuthRepository {
+  //   public async getAllUsers (): Promise<UserDTO> {
+  //     return await prisma.user.findMany()
+  //   }
 
-//     public async getUserById(id: number) {
-//         // return prisma.user.findUnique({ where: { id } });
-//     }
+  public async existUserByEmail (email: string): Promise<Boolean> {
+    const user = await prisma.user.findUnique({ where: { email } })
+    return user !== null
+  }
 
-//     public async createUser(data: UserDTO) {
-//         // return prisma.user.create({ data });
-//     }
+  public async registUser (data: any): Promise<any> {
+    return await prisma.user.create({ data })
+  }
 
-//     public async updateUser(id: number, data: UserDTO) {
-//         // return prisma.user.update({ where: { id }, data });
-//     }
+  //   public async updateUser (id: number, data: UserDTO) {
+  // return prisma.user.update({ where: { id }, data });
+  //   }
 
-//     public async deleteUser(id: number) {
-//         // return prisma.user.delete({ where: { id } });
-//     }
-// }
+  //   public async deleteUser (id: number) {
+  //     // return prisma.user.delete({ where: { id } });
+  //   }
+}

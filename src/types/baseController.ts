@@ -1,24 +1,35 @@
 import { Pagination, QueryPaginate } from '@src/types'
+import { Exception } from '@src/types/baseException'
+import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+dotenv.config({ path: '/.env.local' })
+const { JWT_SECRET, JWT_EXPIRES_IN } = process.env
 
 export abstract class Controller {
   /**
      * Envía una respuesta de éxito con soporte para paginación.
+     * @param req - Objeto de solicitud de Express.
      * @param res - Objeto de respuesta de Express.
      * @param data - Datos a enviar en la respuesta.
      * @param message - Mensaje opcional.
      * @param statusCode - Código de estado HTTP (por defecto 200).
-     * @param token - Token opcional que se enviará en el header Authorization.
      * @param pagination - Información de paginación (opcional).
+     * @param generateToken - Indica si se debe generar un token (por defecto true).
+     * @return void
      */
   protected successResponse (
-    res: any,
+    req: Request,
+    res: Response,
     data: any,
     message: string = 'Operación exitosa',
     statusCode: number = 200,
-    token?: string,
-    pagination?: Pagination
+    pagination?: Pagination,
+    generateToken: boolean = true
   ): void {
-    if (token !== undefined) {
+    // Si tiene un token en la req, y generateToken es verdadero, lo generamos
+    if (req.user !== undefined && generateToken) {
+      const token = this.generateToken(req.user)
       res.setHeader('Authorization', `Bearer ${token}`)
     }
 
@@ -36,6 +47,16 @@ export abstract class Controller {
     res.status(statusCode).json(response)
   }
 
+  /**
+   *
+   * @param req - Objeto de solicitud de Express.
+   * @param res - Objeto de respuesta de Express.
+   * @param data - Datos a enviar en la respuesta.
+   * @param message - Mensaje opcional.
+   * @param statusCode - Código de estado HTTP (por defecto 200).
+   * @param generateToken - Indica si se debe generar un token (por defecto true).
+   * @return QueryPaginate
+   */
   protected getQueryPaginate (req: any): QueryPaginate {
     if (req.query.page === undefined) {
       req.query.page = '1'
@@ -58,11 +79,37 @@ export abstract class Controller {
    * @param res - Objeto de respuesta de Express.
    * @param error - Error o mensaje de error.
    * @param statusCode - Código de estado HTTP (por defecto 500).
+   * @return void
    */
   protected errorResponse (res: any, error: any, statusCode: number = 500): void {
-    res.status(statusCode).json({
-      success: false,
-      message: error instanceof Error ? error.message : error
-    })
+    if (error instanceof Exception) {
+      console.error('Error:', error.message)
+      statusCode = error.statusCode
+      res.status(statusCode).json({
+        success: false,
+        message: error instanceof Error ? `Error: ${error.message}` : error
+      })
+    } else {
+      console.error('Error desconocido:', error)
+      res.status(statusCode).json({
+        success: false,
+        message: error instanceof Error ? error.message : error
+      })
+    }
+  }
+
+  /**
+   * Genera un token JWT para el usuario.
+   * @param userId - ID del usuario.
+   * @returns Token JWT.
+   */
+  private generateToken (userId: number): string {
+    if (JWT_SECRET === undefined) {
+      throw new Error('JWT_SECRET is not defined')
+    }
+    if (JWT_EXPIRES_IN === undefined) {
+      throw new Error('JWT_EXPIRES_IN is not defined')
+    }
+    return jwt.sign({ userId }, JWT_SECRET, { expiresIn: Number(JWT_EXPIRES_IN) })
   }
 }

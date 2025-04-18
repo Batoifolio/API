@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client'
 export class UsersController extends Controller {
   // private readonly UsersService = new UsersService()
 
-  public async getAllUsers (_req: any, res: any): Promise<void> {
+  public async getAllUsers (req: any, res: any): Promise<void> {
     try {
       const prisma = new PrismaClient()
 
@@ -46,16 +46,16 @@ export class UsersController extends Controller {
 
       // const users = { id: 1, name: 'John Doe' } // Simulación de datos
 
-      this.successResponse(res, users, 'Users encontrado')
+      this.successResponse(req, res, users, 'Users encontrado')
     } catch (error) {
       this.errorResponse(res, 'Error al obtener el Users')
     }
   }
 
-  public getUserById (_req: any, res: any): void {
+  public getUserById (req: any, res: any): void {
     try {
       const user = { id: 1, name: 'John Doe' } // Simulación de datos
-      this.successResponse(res, user, 'Users encontrado')
+      this.successResponse(req, res, user, 'Users encontrado')
     } catch (error) {
       this.errorResponse(res, 'Error al obtener el Users')
     }

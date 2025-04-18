@@ -56,7 +56,6 @@
     "@modules": "./src/modules",
     "@utils": "./src/utils",
     "@enums": "./src/enums",
-    "@logs": "./src/logs",
-    "@types": "./src/types"
+    "@logs": "./src/logs"
   }
 }
