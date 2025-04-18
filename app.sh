@@ -1,35 +1,40 @@
 #!/bin/bash
 
-commands="./commands";
+if [ -z "$batoifolio_path" ]; then
+    batoifolio_path="${PWD}/commands/"
+fi
+
+cd $batoifolio_path
+cd ..
 
 case $1 in
     -init)
-        bash $commands/init.sh;
+        bash $batoifolio_path/init.sh;
         ;;
     -run)
-        bash $commands/run.sh;
+        bash $batoifolio_path/run.sh;
         ;;
     -stop)
-        bash $commands/stop.sh;
+        bash $batoifolio_path/stop.sh;
         ;;
     -purge)
-        bash $commands/purge.sh;
+        bash $batoifolio_path/purge.sh;
         ;;
     -reload)
         if [ "$2" == "-v" ]; then
-            bash $commands/reload.sh -v;
+            bash $batoifolio_path/reload.sh -v;
         else
-            bash $commands/reload.sh;
+            bash $batoifolio_path/reload.sh;
         fi
         ;;
     -shell)
-        bash $commands/shell.sh;
+        bash $batoifolio_path/shell.sh;
         ;;
     -log)
-        bash $commands/log.sh;
+        bash $batoifolio_path/log.sh;
         ;;
     -help)
-        bash $commands/help.sh;
+        bash $batoifolio_path/help.sh;
         ;;
     *)
         clear;

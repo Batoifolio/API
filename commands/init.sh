@@ -1,8 +1,9 @@
 # Añadir un alias para ejecutar /app.sh como batoifolio en el archivo .bashrc
 if ! grep -q "alias batoifolio=" ~/.bashrc; then
     echo "Creando el alias batoifolio..."
+    batoifolio_path="${PWD}/commands/"
     echo "alias batoifolio='bash ${PWD}/app.sh'" >> ~/.bashrc;
-fi
+    echo "export batoifolio_path='${batoifolio_path}'" >> ~/.bashrc;
 
 
 # Auto completar el alias batoifolio
@@ -25,6 +26,10 @@ EOF
 
 source ~/.bashrc;
 
+fi
+
+
+
 
 # Verificar si Docker está instalado antes de ejecutar
 if ! command -v docker-compose &>/dev/null; then
@@ -34,4 +39,5 @@ fi
 
 # Ejecutar docker-compose
 echo "Iniciando el contenedor..."
+
 docker compose up --build

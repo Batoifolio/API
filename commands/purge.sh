@@ -1,3 +1,4 @@
+
 clear;
 echo "Eliminando contenedores";
 docker stop $(docker ps -aq);

@@ -1,3 +1,3 @@
 clear
 echo "Logs:"
-docker logs db-api-1
+ docker logs db-api-1
