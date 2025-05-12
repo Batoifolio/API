@@ -1,4 +1,3 @@
-import { Router } from 'express'
 
 export abstract class Controller {
   /**
@@ -28,29 +27,6 @@ export abstract class Controller {
       message: error instanceof Error ? error.message : error
     })
   }
-}
-
-export interface User {
-  id: number
-  nombre: string
-  apellidos: string
-  username: string
-  email: string
-  password: string
-  fotoPerfil?: string
-  descripcion?: string
-  telefono: string
-  estado: string
-  ultimaConexion?: Date
-  rolId: number
-  empresaId?: number
-  buscaEmpresa: boolean
-  visibilidad: boolean
-  pueblo: string
-  gradoId: number
-  ramaId: number
-  creadoEn?: Date
-  borrado?: boolean
 }
 
 export interface UsersPreferencia {
@@ -180,19 +156,6 @@ export interface Pagination {
 export interface PaginationResult<T> {
   data: T[]
   pagination: Pagination
-}
-
-type Method = 'get' | 'post' | 'put' | 'delete' | 'patch'
-
-type BaseRouter = {
-  [K in Method]: (path: string, authorized: boolean, ...handlers: RequestHandler[]) => void
-} & {
-  use: Router['use']
-  router: Router
-}
-export interface baseRouterModule {
-  path: string
-  router: Router
 }
 
 export interface Error {

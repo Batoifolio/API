@@ -8,35 +8,35 @@ datasource db {
 }
 
 model Rama {
-  id      Int     @id
+  id      Int     @id @default(autoincrement())
   nombre  String
   borrado Boolean @default(false)
   Users   User[]
 }
 
 model Grado {
-  id      Int     @id
+  id      Int     @id @default(autoincrement())
   nombre  String
   borrado Boolean @default(false)
   Users   User[]
 }
 
 model Preferencia {
-  id      Int                @id
+  id      Int                @id @default(autoincrement())
   nombre  String
   borrado Boolean            @default(false)
   Users   UsersPreferencia[]
 }
 
 model Rol {
-  id      Int     @id
+  id      Int     @id @default(autoincrement())
   nombre  String
   borrado Boolean @default(false)
   Users   User[]
 }
 
 model Empresa {
-  id        Int      @id
+  id        Int      @id @default(autoincrement())
   nombre    String
   cif       String   @unique
   direccion String
@@ -48,6 +48,13 @@ model Empresa {
   Users     User[]
 }
 
+model UserEstado {
+  id      Int     @id @default(autoincrement())
+  nombre  String
+  borrado Boolean @default(false)
+  User    User[]
+}
+
 model User {
   id                  Int                   @id @default(autoincrement())
   nombre              String
@@ -55,18 +62,18 @@ model User {
   username            String                @unique
   email               String                @unique
   password            String
-  fotoPerfil          String?
-  descripcion         String?
-  telefono            String
-  estado              String                @default("desconectado")
-  ultimaConexion      DateTime?
-  rolId               Int
-  empresaId           Int?
-  buscaEmpresa        Boolean               @default(false)
-  visibilidad         Boolean               @default(true)
   pueblo              String
   gradoId             Int
   ramaId              Int
+  estado              UserEstado            @relation(fields: [userEstadoId], references: [id])
+  fotoPerfil          String?
+  descripcion         String?
+  telefono            String?
+  ultimaConexion      DateTime              @default(now())
+  rolId               Int?
+  empresaId           Int?
+  buscaEmpresa        Boolean               @default(false)
+  visibilidad         Boolean               @default(true)
   creadoEn            DateTime              @default(now())
   borrado             Boolean               @default(false)
   RefreshTokens       RefreshToken[]
@@ -81,12 +88,13 @@ model User {
   Mensajes            Mensaje[]             @relation("UserMensajes")
   Rama                Rama                  @relation(fields: [ramaId], references: [id], onDelete: Restrict)
   Grado               Grado                 @relation(fields: [gradoId], references: [id], onDelete: Restrict)
-  Rol                 Rol                   @relation(fields: [rolId], references: [id], onDelete: Restrict)
+  Rol                 Rol?                  @relation(fields: [rolId], references: [id], onDelete: Restrict)
   Empresa             Empresa?              @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  userEstadoId        Int
 }
 
 model RefreshToken {
-  id        Int     @id
+  id        Int     @id @default(autoincrement())
   userId    Int
   token     String
   ipAccess  String?
@@ -105,7 +113,7 @@ model UsersPreferencia {
 }
 
 model Publicacion {
-  id        Int                 @id
+  id        Int                 @id @default(autoincrement())
   userId    Int
   contenido String
   creadoEn  DateTime            @default(now())
@@ -115,7 +123,7 @@ model Publicacion {
 }
 
 model ImagenPublicacion {
-  id            Int         @id
+  id            Int         @id @default(autoincrement())
   publicacionId Int
   url           String
   borrado       Boolean     @default(false)
@@ -123,7 +131,7 @@ model ImagenPublicacion {
 }
 
 model Bloqueo {
-  id                Int      @id
+  id                Int      @id @default(autoincrement())
   userId            Int
   userBloqueadoId   Int
   fechaBloqueado    DateTime @default(now())
@@ -134,7 +142,7 @@ model Bloqueo {
 }
 
 model PeticionSeguimiento {
-  id          Int      @id
+  id          Int      @id @default(autoincrement())
   userOrigen  Int
   userDestino Int
   estado      String
@@ -145,7 +153,7 @@ model PeticionSeguimiento {
 }
 
 model Conversacion {
-  id       Int       @id
+  id       Int       @id @default(autoincrement())
   user1Id  Int
   user2Id  Int
   creadoEn DateTime  @default(now())
@@ -156,7 +164,7 @@ model Conversacion {
 }
 
 model Mensaje {
-  id             Int          @id
+  id             Int          @id @default(autoincrement())
   conversacionId Int
   remitenteId    Int
   contenido      String

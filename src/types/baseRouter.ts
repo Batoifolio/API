@@ -1,6 +1,18 @@
 import { Router, RequestHandler } from 'express'
-import { BaseRouter } from '@src/types'
 import { authMiddleware } from '@modules/auth/middlewares/auth.middleware'
+
+type Method = 'get' | 'post' | 'put' | 'delete' | 'patch'
+
+type BaseRouter = {
+  [K in Method]: (path: string, authorized: boolean, ...handlers: RequestHandler[]) => void
+} & {
+  use: Router['use']
+  router: Router
+}
+export interface baseRouterModule {
+  path: string
+  router: Router
+}
 
 export const createBaseRouter = (): BaseRouter => {
   const router = Router()
