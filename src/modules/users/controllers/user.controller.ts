@@ -1,73 +1,88 @@
-// controllers/user.controller.ts
-
+// controllers/users.controller.ts
 import { Request, Response } from 'express'
-import { Controller } from '@src/types/baseController'
-import { Exception } from '@src/types/baseException'
-
 import { UserService } from '../services/user.service'
-import { PrismaUserRepository } from '../repositories/user.repository'
+import { Controller } from '@src/types/baseController'
+import { ExceptionMissField } from '@src/types/baseExceptionMissField'
+import { User } from '../models/user.model'
 
-const userService = new UserService(new PrismaUserRepository())
+export class UsersController extends Controller {
+  private readonly userService = new UserService()
 
-export class UserController extends Controller {
-  public getAll = async (req: Request, res: Response): Promise<void> => {
+  public findAll = async (req: Request, res: Response): Promise<void> => {
     try {
-      const users = await userService.getAll()
-      this.successResponse(req, res, users, 'Lista de usuarios')
+      const queryPaginate = this.getQueryPaginate(req)
+      const { data, pagination } = await this.userService.findAll(queryPaginate)
+
+      this.successResponse(req, res, data, 'Usuarios obtenidos correctamente', 200, pagination)
     } catch (error) {
-      this.errorResponse(res, error)
+      this.errorResponse(res, 'Error al obtener los usuarios', 500)
     }
   }
 
-  public getById = async (req: Request, res: Response): Promise<void> => {
+  public findById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = Number(req.params.id)
-      if (isNaN(id)) throw new Exception('ID no válido', 400)
+      const id = parseInt(req.params.id)
+      const user = await this.userService.findById(id)
 
-      const user = await userService.getById(id)
-      if (user == null) throw new Exception('Usuario no encontrado', 404)
-
-      this.successResponse(req, res, user, 'Usuario encontrado')
+      if (user != null) {
+        this.successResponse(req, res, user, 'Usuario obtenido correctamente', 200)
+      } else {
+        this.errorResponse(res, 'Usuario no encontrado', 404)
+      }
     } catch (error) {
-      this.errorResponse(res, error)
+      this.errorResponse(res, 'Error al obtener el usuario', 500)
     }
   }
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
-      // const { nombre, apellidos, email, username, password } = req.body
-      // if (!nombre || !email || !username || !password) {
-      //   throw new Exception('Faltan campos obligatorios', 400)
-      // }
+      const parsed = User.schema.omit({ id: true, creadoEn: true, ultimaConexion: true }).safeParse(req.body)
 
-      const newUser = await userService.register(req.body)
-      this.successResponse(req, res, newUser, 'Usuario creado', 201)
+      if (!parsed.success) {
+        const missingFields = parsed.error.errors.map(err => err.path.join('.')).join(', ')
+        throw new ExceptionMissField(missingFields)
+      }
+
+      const newUser = await this.userService.create(parsed.data)
+      this.successResponse(req, res, newUser, 'Usuario creado correctamente', 201)
     } catch (error) {
-      this.errorResponse(res, error)
+      if (error instanceof ExceptionMissField) {
+        this.errorResponse(res, `Campos faltantes o inválidos: ${error.message}`, error.statusCode)
+      } else {
+        this.errorResponse(res, 'Error al crear el usuario', 500)
+      }
     }
   }
 
   public update = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = Number(req.params.id)
-      if (isNaN(id)) throw new Exception('ID no válido', 400)
+      const id = parseInt(req.params.id)
+      const data = req.body
 
-      const updated = await userService.update(id, req.body)
-      this.successResponse(req, res, updated, 'Usuario actualizado')
+      const user = await this.userService.update(id, data)
+
+      if (user != null) {
+        this.successResponse(req, res, user, 'Usuario actualizado correctamente', 200)
+      } else {
+        this.errorResponse(res, 'Usuario no encontrado', 404)
+      }
     } catch (error) {
-      this.errorResponse(res, error)
+      this.errorResponse(res, 'Error al actualizar el usuario', 500)
     }
   }
 
   public delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      const id = Number(req.params.id)
-      if (isNaN(id)) throw new Exception('ID no válido', 400)
+      const id = parseInt(req.params.id)
+      const user = await this.userService.delete(id)
 
-      await userService.remove(id)
-      this.successResponse(req, res, null, 'Usuario borrado', 204)
+      if (user != null) {
+        this.successResponse(req, res, user, 'Usuario eliminado correctamente', 200)
+      } else {
+        this.errorResponse(res, 'Usuario no encontrado', 404)
+      }
     } catch (error) {
-      this.errorResponse(res, error)
+      this.errorResponse(res, 'Error al eliminar el usuario', 500)
     }
   }
 }

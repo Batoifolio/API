@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Exception } from '@src/types/baseException'
+import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 import { Controller } from '@src/types/baseController'
 
 import { AuthService } from '../services/auth.service'
@@ -11,13 +11,13 @@ export class AuthController extends Controller {
     try {
       const { name, email, password } = req.body
       if (name === undefined) {
-        throw new Exception('falta nombre', 401)
+        throw new ExceptionMissField('name')
       }
       if (email === undefined) {
-        throw new Exception('falta email', 401)
+        throw new ExceptionMissField('email')
       }
       if (password === undefined) {
-        throw new Exception('falta contraseña', 401)
+        throw new ExceptionMissField('password')
       }
 
       const user = await this.authService.register(name, email, password)

@@ -2,13 +2,12 @@ import express, { Router } from 'express'
 import { baseRouterModule } from '@src/types/baseRouter'
 
 // Importar rutas de los módulos
-// import UsersRouter from '@modules/users/routes/users.routes'
 import RamasRouter from '@modules/ramas/routes/ramas.routes'
-// import FamiliasRouter from '@modules/familias/routes/familia.routes'
+import UsersRouter from '@modules/users/routes/user.routes'
 import AuthRouter from '@modules/auth/routes/auth.routes'
 
 // Lista centralizada de módulos
-const modules: baseRouterModule[] = [AuthRouter, RamasRouter]
+const modules: baseRouterModule[] = [AuthRouter, RamasRouter, UsersRouter]
 
 // Ruta test
 const router = Router()

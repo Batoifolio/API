@@ -22,11 +22,11 @@ export class Rama implements RamaInterface {
     this.borrado = borrado
   }
 
-  public static async countRamas (): Promise<number> {
+  public static async count (): Promise<number> {
     return await prisma.rama.count()
   }
 
-  public static async getAllRamas (): Promise<Rama[]> {
+  public static async findAll (): Promise<Rama[]> {
     const ramas = await prisma.rama.findMany({
       where: { borrado: false },
       orderBy: { id: 'asc' }
@@ -34,21 +34,21 @@ export class Rama implements RamaInterface {
     return ramas.map((rama) => Rama.mapToModel(rama))
   }
 
-  public static async getRamaById (id: number): Promise<Rama | null> {
+  public static async findById (id: number): Promise<Rama | null> {
     const rama = await prisma.rama.findFirst({
       where: { id, borrado: false }
     })
     return (rama != null) ? Rama.mapToModel(rama) : null
   }
 
-  public static async createRama (nombre: string): Promise<Rama> {
+  public static async create (nombre: string): Promise<Rama> {
     const rama = await prisma.rama.create({
       data: { nombre: nombre }
     })
     return Rama.mapToModel(rama)
   }
 
-  public static async updateRama (id: number, nombre: string): Promise<Rama | null> {
+  public static async update (id: number, nombre: string): Promise<Rama | null> {
     const rama = await prisma.rama.update({
       where: { id },
       data: { nombre }
@@ -56,7 +56,7 @@ export class Rama implements RamaInterface {
     return (rama != null) ? Rama.mapToModel(rama) : null
   }
 
-  public static async deleteRama (id: number): Promise<Rama | null> {
+  public static async delete (id: number): Promise<Rama | null> {
     const rama = await prisma.rama.update({
       where: { id },
       data: { borrado: true }
@@ -64,14 +64,14 @@ export class Rama implements RamaInterface {
     return (rama != null) ? Rama.mapToModel(rama) : null
   }
 
-  public static async getRamaByNombre (nombre: string): Promise<Rama | null> {
+  public static async findByNombre (nombre: string): Promise<Rama | null> {
     const rama = await prisma.rama.findFirst({
       where: { nombre, borrado: false }
     })
     return (rama != null) ? Rama.mapToModel(rama) : null
   }
 
-  public static async getRamasPaginate (page: number, take: number): Promise<any> {
+  public static async findAllPaginate (page: number, take: number): Promise<any> {
     const skip = (page - 1) * take
     return await prisma.rama.findMany({
       skip,

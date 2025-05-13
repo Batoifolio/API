@@ -8,5 +8,5 @@ export const UserCreateSchema = z.object({
   password: z.string().min(6),
   pueblo: z.string(),
   gradoId: z.number(),
-  familiaId: z.number()
+  ramaId: z.number()
 })

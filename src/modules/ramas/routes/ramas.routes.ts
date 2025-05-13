@@ -4,11 +4,11 @@ import { RamasController } from '../controllers/ramas.controller'
 const ramasRouter = createBaseRouter()
 const ramaController = new RamasController()
 
-ramasRouter.get('/', false, ramaController.getAllRamas.bind(ramaController))
-ramasRouter.get('/:id', false, ramaController.getRamaById.bind(ramaController))
-ramasRouter.post('/', false, ramaController.createRama.bind(ramaController))
-ramasRouter.put('/:id', false, ramaController.updateRama.bind(ramaController))
-ramasRouter.delete('/:id', false, ramaController.deleteRama.bind(ramaController))
+ramasRouter.get('/', false, ramaController.findAll.bind(ramaController))
+ramasRouter.get('/:id', false, ramaController.findById.bind(ramaController))
+ramasRouter.post('/', false, ramaController.create.bind(ramaController))
+ramasRouter.put('/:id', false, ramaController.update.bind(ramaController))
+ramasRouter.delete('/:id', false, ramaController.delete.bind(ramaController))
 
 export default {
   path: '/ramas',

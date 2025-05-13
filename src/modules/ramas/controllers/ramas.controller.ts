@@ -2,28 +2,26 @@
 import { Request, Response } from 'express'
 import { RamasService } from '../services/ramas.service'
 import { Controller } from '@src/types/baseController'
-import { BaseExceptionMissField } from '@src/types/baseExceptionMissField'
+import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 
 export class RamasController extends Controller {
   private readonly ramasService = new RamasService()
 
-  // Endpoint para obtener las ramas paginadas
-  public getAllRamas = async (req: Request, res: Response): Promise<void> => {
+  public findAll = async (req: Request, res: Response): Promise<void> => {
     try {
       const queryPaginate = this.getQueryPaginate(req)
-      const { data, pagination } = await this.ramasService.getRamas(queryPaginate)
+      const { data, pagination } = await this.ramasService.findAll(queryPaginate)
 
-      // Enviar la respuesta con paginación
       this.successResponse(req, res, data, 'Ramas obtenidas correctamente', 200, pagination)
     } catch (error) {
       this.errorResponse(res, 'Error al obtener ramas', 500)
     }
   }
 
-  public getRamaById = async (req: Request, res: Response): Promise<void> => {
+  public findById = async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id)
-      const rama = await this.ramasService.getRamaById(id)
+      const rama = await this.ramasService.findById(id)
 
       if (rama != null) {
         this.successResponse(req, res, rama, 'Rama obtenida correctamente', 200)
@@ -35,18 +33,18 @@ export class RamasController extends Controller {
     }
   }
 
-  public createRama = async (req: Request, res: Response): Promise<void> => {
+  public create = async (req: Request, res: Response): Promise<void> => {
     try {
       const { nombre } = req.body
 
       if (nombre != null) {
-        const rama = await this.ramasService.createRama(nombre)
+        const rama = await this.ramasService.create(nombre)
         this.successResponse(req, res, rama, 'Rama creada correctamente', 201)
       } else {
-        throw new BaseExceptionMissField('nombre')
+        throw new ExceptionMissField('nombre')
       }
     } catch (error) {
-      if (error instanceof BaseExceptionMissField) {
+      if (error instanceof ExceptionMissField) {
         this.errorResponse(res, error.message, error.statusCode)
       } else {
         this.errorResponse(res, 'Error al crear la rama', 500)
@@ -54,13 +52,13 @@ export class RamasController extends Controller {
     }
   }
 
-  public updateRama = async (req: Request, res: Response): Promise<void> => {
+  public update = async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id)
       const { nombre } = req.body
 
       if (nombre != null) {
-        const rama = await this.ramasService.updateRama(id, nombre)
+        const rama = await this.ramasService.update(id, nombre)
 
         if (rama != null) {
           this.successResponse(req, res, rama, 'Rama actualizada correctamente', 200)
@@ -68,10 +66,10 @@ export class RamasController extends Controller {
           this.errorResponse(res, 'Rama no encontrada', 404)
         }
       } else {
-        throw new BaseExceptionMissField('nombre')
+        throw new ExceptionMissField('nombre')
       }
     } catch (error) {
-      if (error instanceof BaseExceptionMissField) {
+      if (error instanceof ExceptionMissField) {
         this.errorResponse(res, error.message, error.statusCode)
       } else {
         this.errorResponse(res, 'Error al actualizar la rama', 500)
@@ -79,10 +77,10 @@ export class RamasController extends Controller {
     }
   }
 
-  public deleteRama = async (req: Request, res: Response): Promise<void> => {
+  public delete = async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id)
-      const rama = await this.ramasService.deleteRama(id)
+      const rama = await this.ramasService.delete(id)
 
       if (rama != null) {
         this.successResponse(req, res, rama, 'Rama eliminada correctamente', 200)

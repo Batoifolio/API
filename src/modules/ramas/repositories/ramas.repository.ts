@@ -2,30 +2,29 @@
 import { Rama } from '@src/modules/ramas/models/ramas.model'
 import { PaginationResult, QueryPaginate } from '@src/types'
 import { Repository } from '@src/types/baseRepository'
-// import { Rama } from '../interfaces/ramas.interface'
 
 export class RamasRepository extends Repository {
-  async getRamas (queryPaginate: QueryPaginate): Promise<PaginationResult<Rama>> {
+  async findAll (queryPaginate: QueryPaginate): Promise<PaginationResult<Rama>> {
     return await this.paginate<Rama>({
       queryPaginate,
-      getData: async () => await Rama.getRamasPaginate(queryPaginate.page, queryPaginate.limit),
-      getTotal: async () => await Rama.countRamas()
+      getData: async () => await Rama.findAllPaginate(queryPaginate.page, queryPaginate.limit),
+      getTotal: async () => await Rama.count()
     })
   }
 
-  async getRamaById (id: number): Promise<Rama | null> {
-    return await Rama.getRamaById(id)
+  async findById (id: number): Promise<Rama | null> {
+    return await Rama.findById(id)
   }
 
-  async createRama (nombre: string): Promise<Rama> {
-    return await Rama.createRama(nombre)
+  async create (nombre: string): Promise<Rama> {
+    return await Rama.create(nombre)
   }
 
-  async updateRama (id: number, nombre: string): Promise<Rama | null> {
-    return await Rama.updateRama(id, nombre)
+  async update (id: number, nombre: string): Promise<Rama | null> {
+    return await Rama.update(id, nombre)
   }
 
-  async deleteRama (id: number): Promise<Rama | null> {
-    return await Rama.deleteRama(id)
+  async delete (id: number): Promise<Rama | null> {
+    return await Rama.delete(id)
   }
 }

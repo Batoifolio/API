@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export class AuthRepository {
-  //   public async getAllUsers (): Promise<UserDTO> {
+  //   public async findAll (): Promise<UserDTO> {
   //     return await prisma.user.findMany()
   //   }
 
@@ -17,11 +17,11 @@ export class AuthRepository {
     return await prisma.user.create({ data })
   }
 
-  //   public async updateUser (id: number, data: UserDTO) {
+  //   public async update (id: number, data: UserDTO) {
   // return prisma.user.update({ where: { id }, data });
   //   }
 
-  //   public async deleteUser (id: number) {
+  //   public async delete (id: number) {
   //     // return prisma.user.delete({ where: { id } });
   //   }
 }

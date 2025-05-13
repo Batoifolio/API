@@ -48,13 +48,6 @@ model Empresa {
   Users     User[]
 }
 
-model UserEstado {
-  id      Int     @id @default(autoincrement())
-  nombre  String
-  borrado Boolean @default(false)
-  User    User[]
-}
-
 model User {
   id                  Int                   @id @default(autoincrement())
   nombre              String
@@ -63,9 +56,9 @@ model User {
   email               String                @unique
   password            String
   pueblo              String
-  gradoId             Int
-  ramaId              Int
-  estado              UserEstado            @relation(fields: [userEstadoId], references: [id])
+  gradoId             Int?
+  ramaId              Int?
+  estado              String                @default("conectado")
   fotoPerfil          String?
   descripcion         String?
   telefono            String?
@@ -86,11 +79,10 @@ model User {
   Conversaciones1     Conversacion[]        @relation("UserConversaciones1")
   Conversaciones2     Conversacion[]        @relation("UserConversaciones2")
   Mensajes            Mensaje[]             @relation("UserMensajes")
-  Rama                Rama                  @relation(fields: [ramaId], references: [id], onDelete: Restrict)
-  Grado               Grado                 @relation(fields: [gradoId], references: [id], onDelete: Restrict)
+  Rama                Rama?                 @relation(fields: [ramaId], references: [id], onDelete: Restrict)
+  Grado               Grado?                @relation(fields: [gradoId], references: [id], onDelete: Restrict)
   Rol                 Rol?                  @relation(fields: [rolId], references: [id], onDelete: Restrict)
   Empresa             Empresa?              @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  userEstadoId        Int
 }
 
 model RefreshToken {

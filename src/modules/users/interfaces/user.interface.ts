@@ -1,9 +1,4 @@
-export enum Estado {
-  conectado = 'conectado',
-  desconectado = 'desconectado',
-}
-
-export interface IUser {
+export interface UserInterface {
   id: number
   nombre: string
   apellidos: string
@@ -11,17 +6,17 @@ export interface IUser {
   email: string
   password: string
   pueblo: string
-  gradoId: number
-  familiaId: number
-  estado: Estado
-  fotoPerfil?: string
-  descripcion?: string
-  telefono?: string
+  gradoId: number | null
+  ramaId: number | null
+  estado?: string
+  fotoPerfil?: string | null
+  descripcion?: string | null
+  telefono?: string | null
   ultimaConexion: Date
-  rolId?: number
-  empresaId?: number
+  rolId?: number | null
+  empresaId?: number | null
   buscaEmpresa: boolean
   visibilidad: boolean
   creadoEn: Date
-  borrado: boolean
+  borrado?: boolean
 }

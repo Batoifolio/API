@@ -6,25 +6,23 @@ import { RamaInterface } from '../interfaces/ramas.interface'
 export class RamasService {
   private readonly ramasRepository = new RamasRepository()
 
-  // Método para obtener las ramas paginadas
-  async getRamas (queryPaginate: QueryPaginate): Promise<PaginationResult<RamaInterface>> {
-    return await this.ramasRepository.getRamas(queryPaginate)
+  async findAll (queryPaginate: QueryPaginate): Promise<PaginationResult<RamaInterface>> {
+    return await this.ramasRepository.findAll(queryPaginate)
   }
 
-  async getRamaById (id: number): Promise<RamaInterface | null> {
-    return await this.ramasRepository.getRamaById(id)
+  async findById (id: number): Promise<RamaInterface | null> {
+    return await this.ramasRepository.findById(id)
   }
 
-  async createRama (nombre: string): Promise<RamaInterface> {
-    return await this.ramasRepository.createRama(nombre)
+  async create (nombre: string): Promise<RamaInterface> {
+    return await this.ramasRepository.create(nombre)
   }
 
-  async updateRama (id: number, nombre: string): Promise<RamaInterface | null> {
-    return await this.ramasRepository.updateRama(id, nombre)
+  async update (id: number, nombre: string): Promise<RamaInterface | null> {
+    return await this.ramasRepository.update(id, nombre)
   }
 
-  async deleteRama (id: number): Promise<RamaInterface | null> {
-    return await this.ramasRepository.deleteRama(id)
+  async delete (id: number): Promise<RamaInterface | null> {
+    return await this.ramasRepository.delete(id)
   }
-  // Métodos para manejar ramas (crear, actualizar, eliminar, etc.)
 }
