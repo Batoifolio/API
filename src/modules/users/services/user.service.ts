@@ -22,6 +22,16 @@ export class UserService {
       throw new ExceptionBadFormatField('Username ya existe')
     }
 
+    const nameRegex = /^[a-zA-Z\s]+$/
+    if (!nameRegex.test(data.nombre as string)) {
+      throw new ExceptionBadFormatField('El nombre solo puede contener letras y espacios')
+    }
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{4,}$/
+    if (!passwordRegex.test(data.password as string)) {
+      throw new ExceptionBadFormatField('La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número')
+    }
+
     return await this.userRepository.create(data)
   }
 
