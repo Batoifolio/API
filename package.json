@@ -30,6 +30,8 @@
     "typescript": "4.3.2"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "6.0.0",
     "bcryptjs": "3.0.2",
     "cors": "2.8.5",
     "dotenv": "16.4.7",

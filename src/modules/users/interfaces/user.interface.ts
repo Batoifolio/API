@@ -19,4 +19,7 @@ export interface UserInterface {
   visibilidad: boolean
   creadoEn: Date
   borrado?: boolean
+
+  // Métodos adicionales
+  verifyPassword: (password: string) => Promise<boolean>
 }

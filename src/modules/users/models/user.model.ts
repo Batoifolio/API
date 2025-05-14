@@ -1,6 +1,7 @@
 // models/user.model.ts
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
+import bcrypt from 'bcrypt'
 import { UserInterface } from '../interfaces/user.interface'
 
 const prisma = new PrismaClient()
@@ -129,6 +130,21 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
+  private static async hashPassword (plainPassword: string): Promise<string> {
+    const saltRounds = 10
+    return await Promise.resolve(await bcrypt.hash(plainPassword, saltRounds))
+  }
+
+  public async verifyPassword (plainPassword: string): Promise<boolean> {
+    try {
+      // eslint-disable-next-line @typescript-eslint/return-await
+      return await bcrypt.compare(plainPassword, this.password)
+    } catch (err) {
+      console.error('Error al comparar contraseñas:', err)
+      return false
+    }
+  }
+
   public static async create (data: Omit<z.infer<typeof User.schema>, 'id' | 'creadoEn' | 'ultimaConexion'>): Promise<User> {
     const newUser = await prisma.user.create({
       data: {
@@ -136,7 +152,7 @@ export class User implements UserInterface {
         apellidos: data.apellidos,
         username: data.username,
         email: data.email,
-        password: data.password,
+        password: await this.hashPassword(data.password),
         pueblo: data.pueblo,
         estado: data.estado,
         fotoPerfil: data.fotoPerfil,
@@ -159,7 +175,11 @@ export class User implements UserInterface {
   public static async update (id: number, data: Partial<Omit<z.infer<typeof User.schema>, 'id'>>): Promise<User | null> {
     const user = await prisma.user.update({
       where: { id },
-      data
+      data: {
+        ...data,
+        password: data.password !== undefined && data.password !== null ? await this.hashPassword(data.password) : undefined
+      }
+
     })
     return user !== null && user !== undefined ? User.mapToModel(user) : null
   }

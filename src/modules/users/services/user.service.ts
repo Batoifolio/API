@@ -14,6 +14,14 @@ export class UserService {
     return await this.userRepository.findById(id)
   }
 
+  async findByEmail (email: string): Promise<UserInterface | null> {
+    return await this.userRepository.findByEmail(email)
+  }
+
+  async findByUsername (username: string): Promise<UserInterface | null> {
+    return await this.userRepository.findByUsername(username)
+  }
+
   async create (data: Partial<UserInterface>): Promise<UserInterface> {
     if ((await this.userRepository.findByEmail(data.email as string)) != null) {
       throw new ExceptionBadFormatField('Email ya existe')
