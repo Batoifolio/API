@@ -37,8 +37,8 @@ export class User implements UserInterface {
     email: z.string().email(),
     password: z.string(),
     pueblo: z.string(),
-    gradoId: z.number().int(),
-    ramaId: z.number().int(),
+    gradoId: z.number().int().nullable().optional().default(null),
+    ramaId: z.number().int().nullable().optional().default(null),
     estado: Estado.default('conectado'),
     fotoPerfil: z.string().url().nullable().optional(),
     descripcion: z.string().nullable().optional(),
@@ -46,10 +46,10 @@ export class User implements UserInterface {
     ultimaConexion: z.coerce.date(),
     rolId: z.number().int().nullable().optional(),
     empresaId: z.number().int().nullable().optional(),
-    buscaEmpresa: z.boolean(),
-    visibilidad: z.boolean(),
-    creadoEn: z.coerce.date(),
-    borrado: z.boolean()
+    buscaEmpresa: z.boolean().optional().default(true),
+    visibilidad: z.boolean().default(true),
+    creadoEn: z.coerce.date().default(() => new Date()),
+    borrado: z.boolean().optional().default(false)
   })
 
   constructor (
@@ -72,7 +72,7 @@ export class User implements UserInterface {
     buscaEmpresa: boolean,
     visibilidad: boolean,
     creadoEn: Date,
-    borrado: boolean
+    borrado: boolean = false
   ) {
     this.id = id
     this.nombre = nombre
@@ -84,7 +84,7 @@ export class User implements UserInterface {
     this.gradoId = gradoId
     this.ramaId = ramaId
     this.estado = estado
-    this.fotoPerfil = fotoPerfil
+    this.fotoPerfil = fotoPerfil ?? `https://ui-avatars.com/api/?uppercase=false&name=${this.nombre}+${this.apellidos}`
     this.descripcion = descripcion
     this.telefono = telefono
     this.ultimaConexion = ultimaConexion
@@ -111,6 +111,20 @@ export class User implements UserInterface {
   public static async findById (id: number): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { id, borrado: false }
+    })
+    return (user != null) ? User.mapToModel(user) : null
+  }
+
+  public static async findByEmail (email: string): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: { email, borrado: false }
+    })
+    return (user != null) ? User.mapToModel(user) : null
+  }
+
+  public static async findByUsername (username: string): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: { username, borrado: false }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -179,8 +193,8 @@ export class User implements UserInterface {
       parsed.email,
       parsed.password,
       parsed.pueblo,
-      parsed.gradoId,
-      parsed.ramaId,
+      parsed.gradoId ?? null,
+      parsed.ramaId ?? null,
       parsed.estado,
       parsed.fotoPerfil,
       parsed.descripcion,

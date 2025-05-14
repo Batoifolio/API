@@ -9,13 +9,13 @@ class AuthMiddleware extends Controller {
       // 1. Obtener el token del header Authorization
       const authHeader = req.headers.authorization
       if (authHeader === undefined) {
-        return this.errorResponse(res, 'Token no proporcionado', 403)
+        return this.errorResponse(res, null, 'Token no proporcionado', 403)
       }
 
       // 2. Verificar que el formato sea "Bearer <token>"
       const parts = authHeader.split(' ')
       if (parts.length !== 2 || parts[0] !== 'Bearer') {
-        return this.errorResponse(res, 'Formato de token inválido', 403)
+        return this.errorResponse(res, null, 'Formato de token inválido', 403)
       }
 
       const token = parts[1]
@@ -23,7 +23,7 @@ class AuthMiddleware extends Controller {
       // 3. Verificar el token
       jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
         if (err != null) {
-          return this.errorResponse(res, 'Token inválido', 403)
+          return this.errorResponse(res, err, 'Token inválido', 403)
         }
 
         // 4. Guardar el payload en req.user y continuar con next()
@@ -31,7 +31,7 @@ class AuthMiddleware extends Controller {
         next()
       })
     } catch (error) {
-      this.errorResponse(res, 'Error en la autenticación', 500)
+      this.errorResponse(res, error, 'Error en la autenticación')
     }
   }
 }

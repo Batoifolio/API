@@ -23,7 +23,7 @@ export class AuthController extends Controller {
       const user = await this.authService.register(name, email, password)
       this.successResponse(req, res, user, 'Usuario registrado Correctamente', 200)
     } catch (error) {
-      this.errorResponse(res, error)
+      this.errorResponse(res, error, 'Error al registrar el usuario')
     }
   }
 }

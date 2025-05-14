@@ -81,7 +81,7 @@ export abstract class Controller {
    * @param statusCode - Código de estado HTTP (por defecto 500).
    * @return void
    */
-  protected errorResponse (res: any, error: any, statusCode: number = 500): void {
+  protected errorResponse (res: any, error: any, messageToApi: string = 'Error en la api', statusCode: number = 500): void {
     if (error instanceof Exception) {
       console.error('Error:', error.message)
       statusCode = error.statusCode
@@ -90,10 +90,10 @@ export abstract class Controller {
         message: error instanceof Error ? `Error: ${error.message}` : error
       })
     } else {
-      console.error('Error desconocido:', error)
+      console.error('Error desconocido:', error instanceof Error ? error.message : error)
       res.status(statusCode).json({
         success: false,
-        message: error instanceof Error ? error.message : error
+        message: messageToApi
       })
     }
   }

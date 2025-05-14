@@ -83,6 +83,8 @@ model User {
   Grado               Grado?                @relation(fields: [gradoId], references: [id], onDelete: Restrict)
   Rol                 Rol?                  @relation(fields: [rolId], references: [id], onDelete: Restrict)
   Empresa             Empresa?              @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  @@index([username, email])
 }
 
 model RefreshToken {

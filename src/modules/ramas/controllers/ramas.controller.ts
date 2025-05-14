@@ -14,7 +14,7 @@ export class RamasController extends Controller {
 
       this.successResponse(req, res, data, 'Ramas obtenidas correctamente', 200, pagination)
     } catch (error) {
-      this.errorResponse(res, 'Error al obtener ramas', 500)
+      this.errorResponse(res, error, 'Error al obtener ramas')
     }
   }
 
@@ -26,10 +26,10 @@ export class RamasController extends Controller {
       if (rama != null) {
         this.successResponse(req, res, rama, 'Rama obtenida correctamente', 200)
       } else {
-        this.errorResponse(res, 'Rama no encontrada', 404)
+        this.errorResponse(res, null, 'Rama no encontrada', 404)
       }
     } catch (error) {
-      this.errorResponse(res, 'Error al obtener la rama', 500)
+      this.errorResponse(res, error, 'Error al obtener la rama')
     }
   }
 
@@ -45,9 +45,9 @@ export class RamasController extends Controller {
       }
     } catch (error) {
       if (error instanceof ExceptionMissField) {
-        this.errorResponse(res, error.message, error.statusCode)
+        this.errorResponse(res, error, error.message, error.statusCode)
       } else {
-        this.errorResponse(res, 'Error al crear la rama', 500)
+        this.errorResponse(res, error, 'Error al crear la rama')
       }
     }
   }
@@ -63,16 +63,16 @@ export class RamasController extends Controller {
         if (rama != null) {
           this.successResponse(req, res, rama, 'Rama actualizada correctamente', 200)
         } else {
-          this.errorResponse(res, 'Rama no encontrada', 404)
+          this.errorResponse(res, null, 'Rama no encontrada', 404)
         }
       } else {
         throw new ExceptionMissField('nombre')
       }
     } catch (error) {
       if (error instanceof ExceptionMissField) {
-        this.errorResponse(res, error.message, error.statusCode)
+        this.errorResponse(res, error, error.message, error.statusCode)
       } else {
-        this.errorResponse(res, 'Error al actualizar la rama', 500)
+        this.errorResponse(res, error, 'Error al actualizar la rama')
       }
     }
   }
@@ -85,10 +85,10 @@ export class RamasController extends Controller {
       if (rama != null) {
         this.successResponse(req, res, rama, 'Rama eliminada correctamente', 200)
       } else {
-        this.errorResponse(res, 'Rama no encontrada', 404)
+        this.errorResponse(res, null, 'Rama no encontrada', 404)
       }
     } catch (error) {
-      this.errorResponse(res, 'Error al eliminar la rama', 500)
+      this.errorResponse(res, 'Error al eliminar la rama')
     }
   }
 }
