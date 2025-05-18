@@ -33,6 +33,9 @@ case $1 in
     -log)
         bash $batoifolio_path/log.sh;
         ;;
+    -newModule)
+        bash $batoifolio_path/newModule.sh $batoifolio_path $2;
+        ;;
     -help)
         bash $batoifolio_path/help.sh;
         ;;
