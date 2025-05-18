@@ -1,3 +1,4 @@
+// routes/ramas.routes.ts
 import { createBaseRouter } from '@src/types/baseRouter'
 import { RamasController } from '../controllers/ramas.controller'
 
