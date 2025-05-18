@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import { decodedToken } from '@src/types'
 import jwt from 'jsonwebtoken'
 import { Controller } from '@src/types/baseController' // si este es el alias correcto
 
@@ -27,7 +28,8 @@ class AuthMiddleware extends Controller {
         }
 
         // 4. Guardar el payload en req.user y continuar con next()
-        req.user = Number(decoded)
+        const content = decoded as decodedToken
+        req.user = Number(content.userId)
         next()
       })
     } catch (error) {

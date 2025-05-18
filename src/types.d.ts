@@ -163,3 +163,9 @@ export interface Error {
   statusCode?: number
   stack?: string
 }
+
+export interface decodedToken {
+  userId: number
+  iat: number
+  exp: number
+}
