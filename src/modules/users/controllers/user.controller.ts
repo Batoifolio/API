@@ -15,7 +15,7 @@ export class UsersController extends Controller {
 
       this.successResponse(req, res, data, 'Usuarios obtenidos correctamente', 200, pagination)
     } catch (error) {
-      this.errorResponse(res, error, 'Error al obtener los usuarios', 500)
+      this.errorResponse(req, res, error, 'Error al obtener los usuarios', 500)
     }
   }
 
@@ -27,10 +27,10 @@ export class UsersController extends Controller {
       if (user != null) {
         this.successResponse(req, res, user, 'Usuario obtenido correctamente', 200)
       } else {
-        this.errorResponse(res, null, 'Usuario no encontrado', 404)
+        this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
       }
     } catch (error) {
-      this.errorResponse(res, error, 'Error al obtener el usuario', 500)
+      this.errorResponse(req, res, error, 'Error al obtener el usuario', 500)
     }
   }
 
@@ -47,9 +47,9 @@ export class UsersController extends Controller {
       this.successResponse(req, res, newUser, 'Usuario creado correctamente', 201)
     } catch (error) {
       if (error instanceof ExceptionMissField) {
-        this.errorResponse(res, error, 'Campos faltantes o inválidos: ', error.statusCode)
+        this.errorResponse(req, res, error, 'Campos faltantes o inválidos: ', error.statusCode)
       } else {
-        this.errorResponse(res, error, 'Error al crear el usuario', 500)
+        this.errorResponse(req, res, error, 'Error al crear el usuario', 500)
       }
     }
   }
@@ -64,10 +64,10 @@ export class UsersController extends Controller {
       if (user != null) {
         this.successResponse(req, res, user, 'Usuario actualizado correctamente', 200)
       } else {
-        this.errorResponse(res, null, 'Usuario no encontrado', 404)
+        this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
       }
     } catch (error) {
-      this.errorResponse(res, error, 'Error al actualizar el usuario', 500)
+      this.errorResponse(req, res, error, 'Error al actualizar el usuario', 500)
     }
   }
 
@@ -79,10 +79,10 @@ export class UsersController extends Controller {
       if (user != null) {
         this.successResponse(req, res, user, 'Usuario eliminado correctamente', 200)
       } else {
-        this.errorResponse(res, null, 'Usuario no encontrado', 404)
+        this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
       }
     } catch (error) {
-      this.errorResponse(res, error, 'Error al eliminar el usuario', 500)
+      this.errorResponse(req, res, error, 'Error al eliminar el usuario', 500)
     }
   }
 }

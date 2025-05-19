@@ -53,7 +53,7 @@ export class ${NombreSingular}Controller extends Controller {
 
       this.successResponse(req, res, data, '${Nombre} obtenidas correctamente', 200, pagination)
     } catch (error) {
-      this.errorResponse(res, error, 'Error al obtener ${nombre}')
+      this.errorResponse(req, res, error, 'Error al obtener ${nombre}')
     }
   }
 
@@ -65,10 +65,10 @@ export class ${NombreSingular}Controller extends Controller {
       if (${nombreSingular} != null) {
         this.successResponse(req, res, ${nombreSingular}, '${NombreSingular} obtenida correctamente', 200)
       } else {
-        this.errorResponse(res, null, '${NombreSingular} no encontrada', 404)
+        this.errorResponse(req, res, null, '${NombreSingular} no encontrada', 404)
       }
     } catch (error) {
-      this.errorResponse(res, error, 'Error al obtener la ${nombreSingular}')
+      this.errorResponse(req, res, error, 'Error al obtener la ${nombreSingular}')
     }
   }
 
@@ -77,16 +77,16 @@ export class ${NombreSingular}Controller extends Controller {
       const { nombre } = req.body
 
       if (nombre != null) {
-        const ${nombreSingular} = await this.${nombreSingular}Service.create(nombre)
+        const ${nombreSingular} = await this.${nombreSingular}Service.create({ nombre: nombre })
         this.successResponse(req, res, ${nombreSingular}, '${NombreSingular} creada correctamente', 201)
       } else {
         throw new ExceptionMissField('nombre')
       }
     } catch (error) {
       if (error instanceof ExceptionMissField) {
-        this.errorResponse(res, error, error.message, error.statusCode)
+        this.errorResponse(req, res, error, error.message, error.statusCode)
       } else {
-        this.errorResponse(res, error, 'Error al crear la ${nombreSingular}')
+        this.errorResponse(req, res, error, 'Error al crear la ${nombreSingular}')
       }
     }
   }
@@ -97,21 +97,21 @@ export class ${NombreSingular}Controller extends Controller {
       const { nombre } = req.body
 
       if (nombre != null) {
-        const ${nombreSingular} = await this.${nombreSingular}Service.update(id, nombre)
+        const ${nombreSingular} = await this.${nombreSingular}Service.update(id, { nombre: nombre })
 
         if (${nombreSingular} != null) {
           this.successResponse(req, res, ${nombreSingular}, '${NombreSingular} actualizada correctamente', 200)
         } else {
-          this.errorResponse(res, null, '${NombreSingular} no encontrada', 404)
+          this.errorResponse(req, res, null, '${NombreSingular} no encontrada', 404)
         }
       } else {
         throw new ExceptionMissField('nombre')
       }
     } catch (error) {
       if (error instanceof ExceptionMissField) {
-        this.errorResponse(res, error, error.message, error.statusCode)
+        this.errorResponse(req, res, error, error.message, error.statusCode)
       } else {
-        this.errorResponse(res, error, 'Error al actualizar la ${nombreSingular}')
+        this.errorResponse(req, res, error, 'Error al actualizar la ${nombreSingular}')
       }
     }
   }
@@ -124,10 +124,10 @@ export class ${NombreSingular}Controller extends Controller {
       if (${nombreSingular} != null) {
         this.successResponse(req, res, ${nombreSingular}, '${NombreSingular} eliminada correctamente', 200)
       } else {
-        this.errorResponse(res, null, '${NombreSingular} no encontrada', 404)
+        this.errorResponse(req, res, null, '${NombreSingular} no encontrada', 404)
       }
     } catch (error) {
-      this.errorResponse(res, 'Error al eliminar la ${nombreSingular}')
+      this.errorResponse(req, res, 'Error al eliminar la ${nombreSingular}')
     }
   }
 }
@@ -189,11 +189,10 @@ export class ${NombreSingular} implements ${NombreSingular}Interface {
     return (${nombreSingular} != null) ? ${NombreSingular}.mapToModel(${nombreSingular}) : null
   }
 
-  public static async create (data: Omit<z.infer<typeof ${NombreSingular}.schema>, 'id' | 'creadoEn' | 'ultimaConexion'>): Promise<${NombreSingular}> {
+  public static async create (data: Omit<z.infer<typeof ${NombreSingular}.schema>, 'id' >): Promise<${NombreSingular}> {
     const new${NombreSingular} = await prisma.${nombreSingular}.create({
       data: {
         // TODO campos de ${NombreSingular}
-        borrado: data.borrado
       }
     })
     return ${NombreSingular}.mapToModel(new${NombreSingular})
@@ -285,11 +284,11 @@ import { ${NombreSingular}Controller } from '../controllers/${nombreSingular}.co
 const ${nombreSingular}Router = createBaseRouter()
 const ${nombreSingular}Controller = new ${NombreSingular}Controller()
 
-${nombreSingular}Router.get('/', false, ${nombreSingular}Controller.findAll.bind(${nombreSingular}Controller))
-${nombreSingular}Router.get('/:id', false, ${nombreSingular}Controller.findById.bind(${nombreSingular}Controller))
-${nombreSingular}Router.post('/', false, ${nombreSingular}Controller.create.bind(${nombreSingular}Controller))
-${nombreSingular}Router.put('/:id', false, ${nombreSingular}Controller.update.bind(${nombreSingular}Controller))
-${nombreSingular}Router.delete('/:id', false, ${nombreSingular}Controller.delete.bind(${nombreSingular}Controller))
+${nombreSingular}Router.get('/', true, ${nombreSingular}Controller.findAll.bind(${nombreSingular}Controller))
+${nombreSingular}Router.get('/:id', true, ${nombreSingular}Controller.findById.bind(${nombreSingular}Controller))
+${nombreSingular}Router.post('/', true, ${nombreSingular}Controller.create.bind(${nombreSingular}Controller))
+${nombreSingular}Router.put('/:id', true, ${nombreSingular}Controller.update.bind(${nombreSingular}Controller))
+${nombreSingular}Router.delete('/:id', true, ${nombreSingular}Controller.delete.bind(${nombreSingular}Controller))
 
 export default {
   path: '/${nombre}',
@@ -302,7 +301,7 @@ EOF
     cat << EOF > "$BASE_DIR/$DIR/$FILE"
 // services/${nombreSingular}.service.ts
 import { PaginationResult, QueryPaginate } from '@src/types'
-import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
+// import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
 import { ${NombreSingular}Repository } from '../repositories/${nombreSingular}.repository'
 import { ${NombreSingular}Interface } from '../interfaces/${nombreSingular}.interface'
 

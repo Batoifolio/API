@@ -19,8 +19,16 @@ export class UserRepository extends Repository {
     return await User.findByEmail(email)
   }
 
+  async emailUnique (email: string): Promise<User | null> {
+    return await User.emailUnique(email)
+  }
+
   async findByUsername (username: string): Promise<User | null> {
     return await User.findByUsername(username)
+  }
+
+  async usernameUnique (username: string): Promise<User | null> {
+    return await User.usernameUnique(username)
   }
 
   async create (data: any): Promise<User> {

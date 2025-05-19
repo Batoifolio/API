@@ -21,7 +21,7 @@ export class AuthController extends Controller {
       req.user = user.id
       this.successResponse(req, res, user, 'Usuario registrado Correctamente', 200)
     } catch (error) {
-      this.errorResponse(res, error, 'Error al registrar el usuario')
+      this.errorResponse(req, res, error, 'Error al registrar el usuario')
     }
   }
 
@@ -41,7 +41,7 @@ export class AuthController extends Controller {
       req.user = user.id
       this.successResponse(req, res, user, 'Usuario logueado correctamente', 200)
     } catch (error) {
-      this.errorResponse(res, error, 'Error al iniciar sesión')
+      this.errorResponse(req, res, error, 'Error al iniciar sesión')
     }
   }
 
@@ -52,7 +52,7 @@ export class AuthController extends Controller {
 
       this.successResponse(req, res, null, 'Usuario deslogueado correctamente', 200)
     } catch (error) {
-      this.errorResponse(res, error, 'Error al cerrar sesión')
+      this.errorResponse(req, res, error, 'Error al cerrar sesión')
     }
   }
 }

@@ -32,6 +32,7 @@ export abstract class Controller {
       const token = this.generateToken(req.user)
       res.setHeader('Authorization', `Bearer ${token}`)
     }
+    req.app.locals.log('info', `Respuesta exitosa: ${message}`)
 
     const response: any = {
       success: true,
@@ -81,16 +82,15 @@ export abstract class Controller {
    * @param statusCode - Código de estado HTTP (por defecto 500).
    * @return void
    */
-  protected errorResponse (res: any, error: any, messageToApi: string = 'Error en la api', statusCode: number = 500): void {
+  protected errorResponse (req: any, res: any, error: any, messageToApi: string = 'Error en la api', statusCode: number = 500): void {
+    const e = error as Error
+    req.app.locals.log('error', `Error: ${e.message}`)
     if (error instanceof Exception) {
-      console.error('Error:', error.message)
-      statusCode = error.statusCode
-      res.status(statusCode).json({
+      res.status(error.statusCode).json({
         success: false,
         message: error instanceof Error ? `Error: ${error.message}` : error
       })
     } else {
-      console.error('Error desconocido:', error instanceof Error ? error.message : error)
       res.status(statusCode).json({
         success: false,
         message: messageToApi

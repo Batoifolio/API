@@ -123,7 +123,21 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
+  public static async emailUnique (email: string): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: { email }
+    })
+    return (user != null) ? User.mapToModel(user) : null
+  }
+
   public static async findByUsername (username: string): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: { username, borrado: false }
+    })
+    return (user != null) ? User.mapToModel(user) : null
+  }
+
+  public static async usernameUnique (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false }
     })

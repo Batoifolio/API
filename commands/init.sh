@@ -12,7 +12,7 @@ _batoifolio_completions() {
     local cur opts
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
-    opts="-init -run -stop -purge -reload -shell -log -help"
+    opts="-init -run -stop -purge -reload -shell -log -help -newModule"
 
     if [[ ${cur} == -* ]]; then
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )

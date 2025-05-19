@@ -1,35 +1,34 @@
-// controllers/ramas.controller.ts
 import { Request, Response } from 'express'
-import { RamasService } from '../services/ramas.service'
+import { RolService } from '../services/rol.service'
 import { Controller } from '@src/types/baseController'
 import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 
-export class RamasController extends Controller {
-  private readonly ramasService = new RamasService()
+export class RolController extends Controller {
+  private readonly rolService = new RolService()
 
   public findAll = async (req: Request, res: Response): Promise<void> => {
     try {
       const queryPaginate = this.getQueryPaginate(req)
-      const { data, pagination } = await this.ramasService.findAll(queryPaginate)
+      const { data, pagination } = await this.rolService.findAll(queryPaginate)
 
-      this.successResponse(req, res, data, 'Ramas obtenidas correctamente', 200, pagination)
+      this.successResponse(req, res, data, 'Rols obtenidas correctamente', 200, pagination)
     } catch (error) {
-      this.errorResponse(req, res, error, 'Error al obtener ramas')
+      this.errorResponse(req, res, error, 'Error al obtener rols')
     }
   }
 
   public findById = async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id)
-      const rama = await this.ramasService.findById(id)
+      const rol = await this.rolService.findById(id)
 
-      if (rama != null) {
-        this.successResponse(req, res, rama, 'Rama obtenida correctamente', 200)
+      if (rol != null) {
+        this.successResponse(req, res, rol, 'Rol obtenida correctamente', 200)
       } else {
-        this.errorResponse(req, res, null, 'Rama no encontrada', 404)
+        this.errorResponse(req, res, null, 'Rol no encontrada', 404)
       }
     } catch (error) {
-      this.errorResponse(req, res, error, 'Error al obtener la rama')
+      this.errorResponse(req, res, error, 'Error al obtener la rol')
     }
   }
 
@@ -38,8 +37,8 @@ export class RamasController extends Controller {
       const { nombre } = req.body
 
       if (nombre != null) {
-        const rama = await this.ramasService.create(nombre)
-        this.successResponse(req, res, rama, 'Rama creada correctamente', 201)
+        const rol = await this.rolService.create({ nombre: nombre })
+        this.successResponse(req, res, rol, 'Rol creada correctamente', 201)
       } else {
         throw new ExceptionMissField('nombre')
       }
@@ -47,7 +46,7 @@ export class RamasController extends Controller {
       if (error instanceof ExceptionMissField) {
         this.errorResponse(req, res, error, error.message, error.statusCode)
       } else {
-        this.errorResponse(req, res, error, 'Error al crear la rama')
+        this.errorResponse(req, res, error, 'Error al crear la rol')
       }
     }
   }
@@ -58,12 +57,12 @@ export class RamasController extends Controller {
       const { nombre } = req.body
 
       if (nombre != null) {
-        const rama = await this.ramasService.update(id, nombre)
+        const rol = await this.rolService.update(id, { nombre: nombre })
 
-        if (rama != null) {
-          this.successResponse(req, res, rama, 'Rama actualizada correctamente', 200)
+        if (rol != null) {
+          this.successResponse(req, res, rol, 'Rol actualizada correctamente', 200)
         } else {
-          this.errorResponse(req, res, null, 'Rama no encontrada', 404)
+          this.errorResponse(req, res, null, 'Rol no encontrada', 404)
         }
       } else {
         throw new ExceptionMissField('nombre')
@@ -72,7 +71,7 @@ export class RamasController extends Controller {
       if (error instanceof ExceptionMissField) {
         this.errorResponse(req, res, error, error.message, error.statusCode)
       } else {
-        this.errorResponse(req, res, error, 'Error al actualizar la rama')
+        this.errorResponse(req, res, error, 'Error al actualizar la rol')
       }
     }
   }
@@ -80,15 +79,15 @@ export class RamasController extends Controller {
   public delete = async (req: Request, res: Response): Promise<void> => {
     try {
       const id = parseInt(req.params.id)
-      const rama = await this.ramasService.delete(id)
+      const rol = await this.rolService.delete(id)
 
-      if (rama != null) {
-        this.successResponse(req, res, rama, 'Rama eliminada correctamente', 200)
+      if (rol != null) {
+        this.successResponse(req, res, rol, 'Rol eliminada correctamente', 200)
       } else {
-        this.errorResponse(req, res, null, 'Rama no encontrada', 404)
+        this.errorResponse(req, res, null, 'Rol no encontrada', 404)
       }
     } catch (error) {
-      this.errorResponse(req, res, 'Error al eliminar la rama')
+      this.errorResponse(req, res, 'Error al eliminar la rol')
     }
   }
 }

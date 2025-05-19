@@ -21,7 +21,7 @@ export abstract class Controller {
        * @param error - Error o mensaje de error.
        * @param statusCode - Código de estado HTTP (por defecto 500).
        */
-  protected errorResponse (res: any, error: any, statusCode: number = 500): void {
+  protected errorResponse (req: any, res: any, error: any, statusCode: number = 500): void {
     res.status(statusCode).json({
       success: false,
       message: error instanceof Error ? error.message : error
