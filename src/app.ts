@@ -12,7 +12,11 @@ app.locals = globals
 
 // Middlewares globales
 app.use(requestLogger)
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:3001', // o el dominio de tu frontend
+  credentials: true, // permite el envío de cookies o auth headers
+  exposedHeaders: ['Authorization'] // permite leer esta cabecera en el frontend
+}))
 app.use(json())
 app.use(urlencoded({ extended: true }))
 

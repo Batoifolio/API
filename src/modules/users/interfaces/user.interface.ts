@@ -5,7 +5,7 @@ export interface UserInterface {
   username: string
   email: string
   password: string
-  pueblo: string
+  pueblo?: string | null
   gradoId: number | null
   ramaId: number | null
   estado?: string

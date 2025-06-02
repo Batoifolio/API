@@ -4,6 +4,10 @@ if [ -z "$batoifolio_path" ]; then
     batoifolio_path="${PWD}/commands/"
 fi
 
+if [ ! -d "$batoifolio_path" ]; then
+    batoifolio_path="${PWD}/commands/"
+fi
+
 cd $batoifolio_path
 cd ..
 

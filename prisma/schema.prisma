@@ -55,7 +55,7 @@ model User {
   username            String                @unique
   email               String                @unique
   password            String
-  pueblo              String
+  pueblo              String?               @default("desconocido")
   gradoId             Int?
   ramaId              Int?
   estado              String                @default("conectado")

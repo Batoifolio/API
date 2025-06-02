@@ -15,7 +15,7 @@ export class User implements UserInterface {
   username: string
   email: string
   password: string
-  pueblo: string
+  pueblo?: string | null
   gradoId: number | null
   ramaId: number | null
   estado: string
@@ -37,7 +37,7 @@ export class User implements UserInterface {
     username: z.string(),
     email: z.string().email(),
     password: z.string(),
-    pueblo: z.string(),
+    pueblo: z.string().nullable().optional(),
     gradoId: z.number().int().nullable().optional().default(null),
     ramaId: z.number().int().nullable().optional().default(null),
     estado: Estado.default('conectado'),
@@ -60,7 +60,7 @@ export class User implements UserInterface {
     username: string,
     email: string,
     password: string,
-    pueblo: string,
+    pueblo: string | null,
     gradoId: number | null,
     ramaId: number | null,
     estado: string,
@@ -167,7 +167,6 @@ export class User implements UserInterface {
         username: data.username,
         email: data.email,
         password: await this.hashPassword(data.password),
-        pueblo: data.pueblo,
         estado: data.estado,
         fotoPerfil: data.fotoPerfil,
         descripcion: data.descripcion,
@@ -177,6 +176,7 @@ export class User implements UserInterface {
         creadoEn: new Date(),
         ultimaConexion: new Date(),
         borrado: data.borrado,
+        pueblo: data.pueblo ?? '',
         gradoId: data.gradoId ?? null,
         ramaId: data.ramaId ?? null,
         rolId: data.rolId ?? undefined,
@@ -190,7 +190,25 @@ export class User implements UserInterface {
     const user = await prisma.user.update({
       where: { id },
       data: {
-        ...data,
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        username: data.username,
+        email: data.email,
+        // password: await this.hashPassword(data.password),
+        estado: data.estado,
+        fotoPerfil: data.fotoPerfil,
+        descripcion: data.descripcion,
+        telefono: data.telefono,
+        buscaEmpresa: data.buscaEmpresa,
+        visibilidad: data.visibilidad,
+        creadoEn: new Date(),
+        ultimaConexion: new Date(),
+        borrado: data.borrado,
+        pueblo: data.pueblo ?? '',
+        gradoId: data.gradoId ?? null,
+        ramaId: data.ramaId ?? null,
+        rolId: data.rolId ?? undefined,
+        empresaId: data.empresaId ?? undefined,
         password: data.password !== undefined && data.password !== null ? await this.hashPassword(data.password) : undefined
       }
 
@@ -226,7 +244,7 @@ export class User implements UserInterface {
       parsed.username,
       parsed.email,
       parsed.password,
-      parsed.pueblo,
+      parsed.pueblo ?? null,
       parsed.gradoId ?? null,
       parsed.ramaId ?? null,
       parsed.estado,

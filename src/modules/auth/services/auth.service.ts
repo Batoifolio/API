@@ -17,7 +17,8 @@ export class AuthService {
 
     if (email !== undefined && email !== null) {
       user = await this.userService.findByEmail(email)
-    } else if (username !== undefined && username !== null) {
+    }
+    if (user === null && username !== undefined && username !== null) {
       user = await this.userService.findByUsername(username)
     }
 
