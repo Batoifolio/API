@@ -1,3 +1,5 @@
+import { GradoInterface } from '../../grados/interfaces/grado.interface'
+
 export interface UserInterface {
   id: number
   nombre: string
@@ -19,6 +21,9 @@ export interface UserInterface {
   visibilidad: boolean
   creadoEn: Date
   borrado?: boolean
+
+  // Relaciones
+  grado?: GradoInterface | null
 
   // Métodos adicionales
   verifyPassword: (password: string) => Promise<boolean>

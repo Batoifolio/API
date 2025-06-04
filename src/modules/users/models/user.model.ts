@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import { UserInterface } from '../interfaces/user.interface'
+import { GradoInterface } from '@src/modules/grados/interfaces/grado.interface'
 
 const prisma = new PrismaClient()
 
@@ -27,6 +28,7 @@ export class User implements UserInterface {
   empresaId?: number | null
   buscaEmpresa: boolean
   visibilidad: boolean
+  grado?: GradoInterface | null | undefined
   creadoEn: Date
   borrado: boolean
 
@@ -73,6 +75,7 @@ export class User implements UserInterface {
     buscaEmpresa: boolean,
     visibilidad: boolean,
     creadoEn: Date,
+    grado?: { id: number, nombre: string } | undefined,
     borrado: boolean = false
   ) {
     this.id = id
@@ -94,6 +97,7 @@ export class User implements UserInterface {
     this.buscaEmpresa = buscaEmpresa
     this.visibilidad = visibilidad
     this.creadoEn = creadoEn
+    this.grado = grado // Inicializar grado como undefined
     this.borrado = borrado
   }
 
@@ -104,43 +108,59 @@ export class User implements UserInterface {
   public static async findAll (): Promise<User[]> {
     const users = await prisma.user.findMany({
       where: { borrado: false },
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'asc' },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
     return users.map(user => User.mapToModel(user))
   }
 
+  // public static async findById (id: number): Promise<User | null> {
+  //   const user = await prisma.user.findFirst({
+  //     where: { id, borrado: false },
+  //     include: { Grado: true }
+  //   })
+  //   return (user != null) ? User.mapToModel(user) : null
+  // }
   public static async findById (id: number): Promise<User | null> {
-    const user = await prisma.user.findFirst({
-      where: { id, borrado: false }
-      // include: { Grado: true }
+    const data = await prisma.user.findFirst({
+      where: { id, borrado: false },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
-    return (user != null) ? User.mapToModel(user) : null
+
+    if (data == null) return null
+
+    const user = User.mapToModel(data)
+    return user
   }
 
   public static async findByEmail (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
-      where: { email, borrado: false }
+      where: { email, borrado: false },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
 
   public static async emailUnique (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
-      where: { email }
+      where: { email },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
 
   public static async findByUsername (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
-      where: { username, borrado: false }
+      where: { username, borrado: false },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
 
   public static async usernameUnique (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
-      where: { username, borrado: false }
+      where: { username, borrado: false },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -231,7 +251,8 @@ export class User implements UserInterface {
       skip,
       take,
       where: { borrado: false },
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'asc' },
+      include: { Grado: { select: { id: true, nombre: true } } }
     })
     return users.map(user => User.mapToModel(user))
   }
@@ -258,6 +279,7 @@ export class User implements UserInterface {
       parsed.buscaEmpresa,
       parsed.visibilidad,
       parsed.creadoEn,
+      (data.Grado != null) ? data.Grado : undefined,
       parsed.borrado
     )
   }
