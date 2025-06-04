@@ -35,4 +35,12 @@ export class AuthService {
     }
     return user
   }
+
+  public async getUserById (userId: number): Promise<UserInterface> {
+    const user = await this.userService.findById(userId)
+    if (user == null) {
+      throw new Exception('Usuario no encontrado', 404)
+    }
+    return user
+  }
 }

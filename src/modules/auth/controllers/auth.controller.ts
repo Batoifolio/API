@@ -55,4 +55,17 @@ export class AuthController extends Controller {
       this.errorResponse(req, res, error, 'Error al cerrar sesión')
     }
   }
+
+  public user = async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (req.user == null || isNaN(req.user)) {
+        throw new ExceptionMissField('user')
+      }
+
+      const user = await this.authService.getUserById(req.user)
+      this.successResponse(req, res, user, 'Usuario obtenido correctamente', 200)
+    } catch (error) {
+      this.errorResponse(req, res, error, 'Error al obtener el usuario')
+    }
+  }
 }
