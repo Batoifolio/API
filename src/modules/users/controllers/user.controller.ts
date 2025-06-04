@@ -59,6 +59,14 @@ export class UsersController extends Controller {
       const id = parseInt(req.params.id)
       const data = req.body
 
+      // gradoId tiene que ser un numero, si no lo es, se lanza un error
+      if (data.gradoId !== undefined && typeof data.gradoId !== 'number') {
+        throw new ExceptionMissField('gradoId debe ser un número')
+      }
+      if (data.ramaId !== undefined && typeof data.ramaId !== 'number') {
+        throw new ExceptionMissField('ramaId debe ser un número')
+      }
+
       const user = await this.userService.update(id, data)
 
       if (user != null) {

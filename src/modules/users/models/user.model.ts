@@ -41,7 +41,7 @@ export class User implements UserInterface {
     gradoId: z.number().int().nullable().optional().default(null),
     ramaId: z.number().int().nullable().optional().default(null),
     estado: Estado.default('conectado'),
-    fotoPerfil: z.string().url().nullable().optional(),
+    fotoPerfil: z.string().nullable().optional(),
     descripcion: z.string().nullable().optional(),
     telefono: z.string().nullable().optional(),
     ultimaConexion: z.coerce.date(),
@@ -112,6 +112,7 @@ export class User implements UserInterface {
   public static async findById (id: number): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { id, borrado: false }
+      // include: { Grado: true }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -204,9 +205,9 @@ export class User implements UserInterface {
         creadoEn: new Date(),
         ultimaConexion: new Date(),
         borrado: data.borrado,
-        pueblo: data.pueblo ?? '',
-        gradoId: data.gradoId ?? null,
-        ramaId: data.ramaId ?? null,
+        pueblo: (data.pueblo !== null && data.pueblo !== undefined && data.pueblo !== '') ? data.pueblo : undefined,
+        gradoId: (data.gradoId !== null && data.gradoId !== undefined && data.gradoId !== 0) ? data.gradoId : undefined,
+        ramaId: (data.ramaId !== null && data.ramaId !== undefined && data.ramaId !== 0) ? data.ramaId : undefined,
         rolId: data.rolId ?? undefined,
         empresaId: data.empresaId ?? undefined,
         password: data.password !== undefined && data.password !== null ? await this.hashPassword(data.password) : undefined

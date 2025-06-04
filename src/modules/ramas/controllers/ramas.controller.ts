@@ -1,6 +1,6 @@
 // controllers/ramas.controller.ts
 import { Request, Response } from 'express'
-import { RamasService } from '../services/ramas.service'
+import { RamasService } from '../services/rama.service'
 import { Controller } from '@src/types/baseController'
 import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 

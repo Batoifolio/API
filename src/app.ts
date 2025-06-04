@@ -13,7 +13,10 @@ app.locals = globals
 // Middlewares globales
 app.use(requestLogger)
 app.use(cors({
-  origin: 'http://localhost:3001', // o el dominio de tu frontend
+  origin: [
+    'http://localhost:3001', // o el dominio de tu frontend
+    'https://3s9z4s8z-3001.uks1.devtunnels.ms/' // nuevo origen añadido
+  ],
   credentials: true, // permite el envío de cookies o auth headers
   exposedHeaders: ['Authorization'] // permite leer esta cabecera en el frontend
 }))
