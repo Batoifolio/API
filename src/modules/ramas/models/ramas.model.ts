@@ -1,6 +1,6 @@
 // models/ramas.model.ts
 import { PrismaClient } from '@prisma/client'
-import { RamaInterface } from '../interfaces/ramas.interface'
+import { RamaInterface } from '../interfaces/rama.interface'
 import { z } from 'zod'
 
 const prisma = new PrismaClient()

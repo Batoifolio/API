@@ -1,4 +1,5 @@
-import { GradoInterface } from '../../grados/interfaces/grado.interface'
+import { GradoInterface } from '@modules/grados/interfaces/grado.interface'
+import { RamaInterface } from '@modules/ramas/interfaces/rama.interface'
 
 export interface UserInterface {
   id: number
@@ -24,6 +25,7 @@ export interface UserInterface {
 
   // Relaciones
   grado?: GradoInterface | null
+  rama?: RamaInterface | null
 
   // Métodos adicionales
   verifyPassword: (password: string) => Promise<boolean>

@@ -3,7 +3,8 @@ import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import { UserInterface } from '../interfaces/user.interface'
-import { GradoInterface } from '@src/modules/grados/interfaces/grado.interface'
+import { GradoInterface } from '@modules/grados/interfaces/grado.interface'
+import { RamaInterface } from '@modules/ramas/interfaces/rama.interface'
 
 const prisma = new PrismaClient()
 
@@ -29,6 +30,7 @@ export class User implements UserInterface {
   buscaEmpresa: boolean
   visibilidad: boolean
   grado?: GradoInterface | null | undefined
+  rama?: RamaInterface | null | undefined
   creadoEn: Date
   borrado: boolean
 
@@ -76,6 +78,7 @@ export class User implements UserInterface {
     visibilidad: boolean,
     creadoEn: Date,
     grado?: { id: number, nombre: string } | undefined,
+    rama?: { id: number, nombre: string } | undefined,
     borrado: boolean = false
   ) {
     this.id = id
@@ -98,6 +101,7 @@ export class User implements UserInterface {
     this.visibilidad = visibilidad
     this.creadoEn = creadoEn
     this.grado = grado // Inicializar grado como undefined
+    this.rama = rama // Inicializar rama como undefined
     this.borrado = borrado
   }
 
@@ -109,7 +113,14 @@ export class User implements UserInterface {
     const users = await prisma.user.findMany({
       where: { borrado: false },
       orderBy: { id: 'asc' },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
     return users.map(user => User.mapToModel(user))
   }
@@ -124,7 +135,14 @@ export class User implements UserInterface {
   public static async findById (id: number): Promise<User | null> {
     const data = await prisma.user.findFirst({
       where: { id, borrado: false },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
 
     if (data == null) return null
@@ -136,7 +154,14 @@ export class User implements UserInterface {
   public static async findByEmail (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email, borrado: false },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -144,7 +169,14 @@ export class User implements UserInterface {
   public static async emailUnique (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -152,7 +184,14 @@ export class User implements UserInterface {
   public static async findByUsername (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -160,7 +199,14 @@ export class User implements UserInterface {
   public static async usernameUnique (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
     return (user != null) ? User.mapToModel(user) : null
   }
@@ -231,6 +277,14 @@ export class User implements UserInterface {
         rolId: data.rolId ?? undefined,
         empresaId: data.empresaId ?? undefined,
         password: data.password !== undefined && data.password !== null ? await this.hashPassword(data.password) : undefined
+      },
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
       }
 
     })
@@ -252,7 +306,14 @@ export class User implements UserInterface {
       take,
       where: { borrado: false },
       orderBy: { id: 'asc' },
-      include: { Grado: { select: { id: true, nombre: true } } }
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
     })
     return users.map(user => User.mapToModel(user))
   }
@@ -280,6 +341,7 @@ export class User implements UserInterface {
       parsed.visibilidad,
       parsed.creadoEn,
       (data.Grado != null) ? data.Grado : undefined,
+      (data.Rama != null) ? data.Rama : undefined,
       parsed.borrado
     )
   }

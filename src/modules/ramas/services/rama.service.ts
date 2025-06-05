@@ -1,7 +1,7 @@
 // services/ramas.service.ts
 import { PaginationResult, QueryPaginate } from '@src/types'
 import { RamasRepository } from '../repositories/ramas.repository'
-import { RamaInterface } from '../interfaces/ramas.interface'
+import { RamaInterface } from '../interfaces/rama.interface'
 
 export class RamasService {
   private readonly ramasRepository = new RamasRepository()
