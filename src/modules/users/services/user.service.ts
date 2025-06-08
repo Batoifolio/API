@@ -10,6 +10,10 @@ export class UserService {
   private readonly gradoRepository = new GradoService()
   private readonly ramaRepository = new RamasService()
 
+  async filterAll (queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
+    return await this.userRepository.findAll(queryPaginate)
+  }
+
   async findAll (queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
     return await this.userRepository.findAll(queryPaginate)
   }

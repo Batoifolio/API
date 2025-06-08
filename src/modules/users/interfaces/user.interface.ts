@@ -30,3 +30,12 @@ export interface UserInterface {
   // Métodos adicionales
   verifyPassword: (password: string) => Promise<boolean>
 }
+
+export interface Filter {
+  nombre?: string
+  apellidos?: string
+  username?: string
+  email?: string
+  gradoId?: number | null
+  ramaId?: number | null
+}

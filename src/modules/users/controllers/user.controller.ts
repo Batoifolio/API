@@ -8,6 +8,17 @@ import { User } from '../models/user.model'
 export class UsersController extends Controller {
   private readonly userService = new UserService()
 
+  public filterAll = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const queryPaginate = this.getQueryPaginate(req)
+      const { data, pagination } = await this.userService.findAll(queryPaginate)
+
+      this.successResponse(req, res, data, 'Usuarios obtenidos correctamente', 200, pagination)
+    } catch (error) {
+      this.errorResponse(req, res, error, 'Error al obtener los usuarios', 500)
+    }
+  }
+
   public findAll = async (req: Request, res: Response): Promise<void> => {
     try {
       const queryPaginate = this.getQueryPaginate(req)
