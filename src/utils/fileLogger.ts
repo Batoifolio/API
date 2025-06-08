@@ -22,6 +22,17 @@ const logger = winston.createLogger({
  */
 export const log = (level: 'info' | 'warn' | 'error', message: string): void => {
   logger.log({ level, message })
-  const date = new Date().toISOString()
+  const fecha = new Date();
+  const opciones: Intl.DateTimeFormatOptions = {
+    year: 'numeric' as 'numeric',
+    month: '2-digit' as '2-digit',
+    day: '2-digit' as '2-digit',
+    hour: '2-digit' as '2-digit',
+    minute: '2-digit' as '2-digit',
+    second: '2-digit' as '2-digit',
+    hour12: false,
+  };
+  const date = fecha.toLocaleString('es-ES', opciones);
+
   console.log(`[${date}] [${level.toUpperCase()}] ${message}`)
 }
