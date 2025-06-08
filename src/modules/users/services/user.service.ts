@@ -1,7 +1,7 @@
 import { PaginationResult, QueryPaginate } from '@src/types'
 import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
 import { UserRepository } from '../repositories/user.repository'
-import { UserInterface } from '../interfaces/user.interface'
+import { UserInterface, Curriculum } from '../interfaces/user.interface'
 import { GradoService } from '@src/modules/grados/services/grado.service'
 import { RamasService } from '@src/modules/ramas/services/rama.service'
 
@@ -10,27 +10,27 @@ export class UserService {
   private readonly gradoRepository = new GradoService()
   private readonly ramaRepository = new RamasService()
 
-  async filterAll (queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
+  async filterAll(queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
     return await this.userRepository.findAll(queryPaginate)
   }
 
-  async findAll (queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
+  async findAll(queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
     return await this.userRepository.findAll(queryPaginate)
   }
 
-  async findById (id: number): Promise<UserInterface | null> {
+  async findById(id: number): Promise<UserInterface | null> {
     return await this.userRepository.findById(id)
   }
 
-  async findByEmail (email: string): Promise<UserInterface | null> {
+  async findByEmail(email: string): Promise<UserInterface | null> {
     return await this.userRepository.findByEmail(email)
   }
 
-  async findByUsername (username: string): Promise<UserInterface | null> {
+  async findByUsername(username: string): Promise<UserInterface | null> {
     return await this.userRepository.findByUsername(username)
   }
 
-  async create (data: Partial<UserInterface>): Promise<UserInterface> {
+  async create(data: Partial<UserInterface>): Promise<UserInterface> {
     if ((await this.userRepository.emailUnique(data.email as string)) != null) {
       throw new ExceptionBadFormatField('Email ya existe')
     }
@@ -53,29 +53,48 @@ export class UserService {
     return await this.userRepository.create(data)
   }
 
-  async update (id: number, data: Partial<UserInterface>): Promise<UserInterface | null> {
+  async update(id: number, data: Partial<UserInterface>): Promise<UserInterface | null> {
     await this.validated(data)
     return await this.userRepository.update(id, data)
   }
 
-  async delete (id: number): Promise<UserInterface | null> {
+  async delete(id: number): Promise<UserInterface | null> {
     return await this.userRepository.delete(id)
   }
 
-  private async validated (data: Partial<UserInterface>): Promise<null> {
+
+  private async validated(data: Partial<UserInterface>): Promise<null> {
     // si llega data.gradoId, tiene que ser un numero, tiene que ser valido entre los grados
-    if (data.gradoId !== undefined && typeof data.gradoId !== 'number') {
+    if (data.gradoId !== undefined && data.gradoId !== null && typeof data.gradoId !== 'number') {
       throw new ExceptionBadFormatField('Le Grado debe ser un número')
     }
-    if (data.gradoId !== undefined && ((await this.gradoRepository.findById(data.gradoId)) == null)) {
+    if (data.gradoId !== undefined && data.gradoId !== null && ((await this.gradoRepository.findById(data.gradoId)) == null)) {
       throw new ExceptionBadFormatField('El Grado no es válido')
     }
-    if (data.ramaId !== undefined && typeof data.ramaId !== 'number') {
+    if (data.ramaId !== undefined && data.ramaId !== null && typeof data.ramaId !== 'number') {
       throw new ExceptionBadFormatField('La Rama debe ser un número')
     }
-    if (data.ramaId !== undefined && ((await this.ramaRepository.findById(data.ramaId)) == null)) {
+    if (data.ramaId !== undefined && data.ramaId !== null && ((await this.ramaRepository.findById(data.ramaId)) == null)) {
       throw new ExceptionBadFormatField('La Rama no es válida')
     }
     return null
+  }
+
+  async findByIdCurriculum(id: number): Promise<Curriculum | null> {
+    const curriculum = await this.userRepository.findByIdCurriculum(id)
+    if (curriculum == null) {
+      return null
+    }
+    return curriculum
+  }
+  async updateCurriculum(id: number, data: any): Promise<Curriculum | null> {
+    const curriculum = await this.userRepository.updateCurriculum(id, data)
+    if (curriculum == null) {
+      return null
+    }
+    if (curriculum == null) {
+      return null
+    }
+    return curriculum
   }
 }

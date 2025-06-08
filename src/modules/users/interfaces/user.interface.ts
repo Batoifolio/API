@@ -9,8 +9,8 @@ export interface UserInterface {
   email: string
   password: string
   pueblo?: string | null
-  gradoId: number | null
-  ramaId: number | null
+  gradoId: number | null | undefined
+  ramaId: number | null | undefined
   estado?: string
   fotoPerfil?: string | null
   descripcion?: string | null
@@ -24,9 +24,8 @@ export interface UserInterface {
   borrado?: boolean
 
   // Relaciones
-  grado?: GradoInterface | null
-  rama?: RamaInterface | null
-
+  grado?: GradoInterface | null | undefined
+  rama?: RamaInterface | null | undefined
   // Métodos adicionales
   verifyPassword: (password: string) => Promise<boolean>
 }
@@ -38,4 +37,29 @@ export interface Filter {
   email?: string
   gradoId?: number | null
   ramaId?: number | null
+}
+
+export interface Curriculum {
+  titulo: string,
+  resumen: string,
+  experiencia: [Experiencia],
+  educacion: [Educacion],
+  habilidades: [string]
+}
+
+export interface Experiencia {
+  id: string,
+  empresa: string,
+  cargo: string,
+  descripcion: string,
+  fechaInicio: string,
+  fechaFin: string
+}
+export interface Educacion {
+  id: string,
+  institucion: string,
+  titulo: string,
+  descripcion: string,
+  fechaInicio: string,
+  fechaFin: string
 }

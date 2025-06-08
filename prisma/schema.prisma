@@ -71,6 +71,10 @@ model User {
   creadoEn       DateTime           @default(now())
   borrado        Boolean            @default(false)
   Preferencias   UsersPreferencia[]
+  Rama           Rama?              @relation(fields: [ramaId], references: [id], onDelete: Restrict)
+  Grado          Grado?             @relation(fields: [gradoId], references: [id], onDelete: Restrict)
+  Rol            Rol?               @relation(fields: [rolId], references: [id], onDelete: Restrict)
+  Empresa        Empresa?           @relation(fields: [empresaId], references: [id], onDelete: Cascade)
   // RefreshTokens       RefreshToken[]
   // Publicaciones       Publicacion[]
   // Bloqueos            Bloqueo[]             @relation("UserBloqueos")
@@ -80,10 +84,6 @@ model User {
   // Conversaciones1     Conversacion[]        @relation("UserConversaciones1")
   // Conversaciones2     Conversacion[]        @relation("UserConversaciones2")
   // Mensajes            Mensaje[]             @relation("UserMensajes")
-  Rama           Rama?              @relation(fields: [ramaId], references: [id], onDelete: Restrict)
-  Grado          Grado?             @relation(fields: [gradoId], references: [id], onDelete: Restrict)
-  Rol            Rol?               @relation(fields: [rolId], references: [id], onDelete: Restrict)
-  Empresa        Empresa?           @relation(fields: [empresaId], references: [id], onDelete: Cascade)
 
   @@index([username, email])
 }

@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
-import { UserInterface } from '../interfaces/user.interface'
+import { UserInterface, Curriculum } from '../interfaces/user.interface'
 import { GradoInterface } from '@modules/grados/interfaces/grado.interface'
 import { RamaInterface } from '@modules/ramas/interfaces/rama.interface'
 
@@ -18,8 +18,6 @@ export class User implements UserInterface {
   email: string
   password: string
   pueblo?: string | null
-  gradoId: number | null
-  ramaId: number | null
   estado: string
   fotoPerfil?: string | null
   descripcion?: string | null
@@ -29,6 +27,8 @@ export class User implements UserInterface {
   empresaId?: number | null
   buscaEmpresa: boolean
   visibilidad: boolean
+  gradoId: number | null | undefined
+  ramaId: number | null | undefined
   grado?: GradoInterface | null | undefined
   rama?: RamaInterface | null | undefined
   creadoEn: Date
@@ -54,10 +54,10 @@ export class User implements UserInterface {
     buscaEmpresa: z.boolean().optional().default(true),
     visibilidad: z.boolean().default(true),
     creadoEn: z.coerce.date().default(() => new Date()),
-    borrado: z.boolean().optional().default(false)
+    borrado: z.boolean().optional().default(false),
   })
 
-  constructor (
+  constructor(
     id: number,
     nombre: string,
     apellidos: string,
@@ -65,8 +65,8 @@ export class User implements UserInterface {
     email: string,
     password: string,
     pueblo: string | null,
-    gradoId: number | null,
-    ramaId: number | null,
+    gradoId: number | null | undefined,
+    ramaId: number | null | undefined,
     estado: string,
     fotoPerfil: string | null | undefined,
     descripcion: string | null | undefined,
@@ -105,11 +105,11 @@ export class User implements UserInterface {
     this.borrado = borrado
   }
 
-  public static async count (): Promise<number> {
+  public static async count(): Promise<number> {
     return await prisma.user.count({ where: { borrado: false } })
   }
 
-  public static async findAll (): Promise<User[]> {
+  public static async findAll(): Promise<User[]> {
     const users = await prisma.user.findMany({
       where: { borrado: false },
       orderBy: { id: 'asc' },
@@ -132,7 +132,7 @@ export class User implements UserInterface {
   //   })
   //   return (user != null) ? User.mapToModel(user) : null
   // }
-  public static async findById (id: number): Promise<User | null> {
+  public static async findById(id: number): Promise<User | null> {
     const data = await prisma.user.findFirst({
       where: { id, borrado: false },
       include: {
@@ -151,7 +151,7 @@ export class User implements UserInterface {
     return user
   }
 
-  public static async findByEmail (email: string): Promise<User | null> {
+  public static async findByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email, borrado: false },
       include: {
@@ -166,7 +166,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  public static async emailUnique (email: string): Promise<User | null> {
+  public static async emailUnique(email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email },
       include: {
@@ -181,7 +181,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  public static async findByUsername (username: string): Promise<User | null> {
+  public static async findByUsername(username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false },
       include: {
@@ -196,7 +196,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  public static async usernameUnique (username: string): Promise<User | null> {
+  public static async usernameUnique(username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false },
       include: {
@@ -211,12 +211,12 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  private static async hashPassword (plainPassword: string): Promise<string> {
+  private static async hashPassword(plainPassword: string): Promise<string> {
     const saltRounds = 10
     return await Promise.resolve(await bcrypt.hash(plainPassword, saltRounds))
   }
 
-  public async verifyPassword (plainPassword: string): Promise<boolean> {
+  public async verifyPassword(plainPassword: string): Promise<boolean> {
     try {
       // eslint-disable-next-line @typescript-eslint/return-await
       return await bcrypt.compare(plainPassword, this.password)
@@ -226,7 +226,7 @@ export class User implements UserInterface {
     }
   }
 
-  public static async create (data: Omit<z.infer<typeof User.schema>, 'id' | 'creadoEn' | 'ultimaConexion'>): Promise<User> {
+  public static async create(data: Omit<z.infer<typeof User.schema>, 'id' | 'creadoEn' | 'ultimaConexion'>): Promise<User> {
     const newUser = await prisma.user.create({
       data: {
         nombre: data.nombre,
@@ -253,7 +253,7 @@ export class User implements UserInterface {
     return User.mapToModel(newUser)
   }
 
-  public static async update (id: number, data: Partial<Omit<z.infer<typeof User.schema>, 'id'>>): Promise<User | null> {
+  public static async update(id: number, data: Partial<Omit<z.infer<typeof User.schema>, 'id'>>): Promise<User | null> {
     const user = await prisma.user.update({
       where: { id },
       data: {
@@ -291,7 +291,7 @@ export class User implements UserInterface {
     return user !== null && user !== undefined ? User.mapToModel(user) : null
   }
 
-  public static async delete (id: number): Promise<User | null> {
+  public static async delete(id: number): Promise<User | null> {
     const user = await prisma.user.update({
       where: { id },
       data: { borrado: true }
@@ -299,7 +299,7 @@ export class User implements UserInterface {
     return User.mapToModel(user)
   }
 
-  public static async findAllPaginate (page: number, take: number): Promise<User[]> {
+  public static async findAllPaginate(page: number, take: number): Promise<User[]> {
     const skip = (page - 1) * take
     const users = await prisma.user.findMany({
       skip,
@@ -318,7 +318,76 @@ export class User implements UserInterface {
     return users.map(user => User.mapToModel(user))
   }
 
-  public static mapToModel (data: any): User {
+  public static async findByIdCurriculum(id: number): Promise<Curriculum | null> {
+    const user = await prisma.user.findFirst({
+      where: { id, borrado: false },
+      select: {
+        curriculum: true,
+      },
+    });
+    if (!user || !user.curriculum) {
+      return null;
+    }
+    return User.mapToCorriculum(user.curriculum);
+  }
+
+  public static async updateCurriculum(id: number, data: Curriculum): Promise<Curriculum | null> {
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        curriculum: {
+          titulo: data.titulo,
+          resumen: data.resumen,
+          experiencia: data.experiencia.map(exp => ({
+            id: exp.id,
+            empresa: exp.empresa,
+            cargo: exp.cargo,
+            descripcion: exp.descripcion,
+            fechaInicio: new Date(exp.fechaInicio).toISOString(),
+            fechaFin: new Date(exp.fechaFin).toISOString(),
+          })),
+          educacion: data.educacion.map(edu => ({
+            id: edu.id,
+            institucion: edu.institucion,
+            titulo: edu.titulo,
+            descripcion: edu.descripcion,
+            fechaInicio: new Date(edu.fechaInicio).toISOString(),
+            fechaFin: new Date(edu.fechaFin).toISOString(),
+          })),
+          habilidades: data.habilidades,
+        },
+      },
+    });
+
+    return user ? User.mapToCorriculum(user.curriculum) : null;
+  }
+
+  private static mapToCorriculum(data: any): Curriculum {
+    return {
+      titulo: data.titulo,
+      resumen: data.resumen,
+      experiencia: data.experiencia.map((exp: any) => ({
+        id: exp.id,
+        empresa: exp.empresa,
+        cargo: exp.cargo,
+        descripcion: exp.descripcion,
+        fechaInicio: exp.fechaInicio ? new Date(exp.fechaInicio).toISOString().split('T')[0] : '',
+        fechaFin: exp.fechaFin ? new Date(exp.fechaFin).toISOString().split('T')[0] : '',
+      })),
+      educacion: data.educacion.map((edu: any) => ({
+        id: edu.id,
+        institucion: edu.institucion,
+        titulo: edu.titulo,
+        descripcion: edu.descripcion,
+        fechaInicio: edu.fechaInicio ? new Date(edu.fechaInicio).toISOString().split('T')[0] : '',
+        fechaFin: edu.fechaFin ? new Date(edu.fechaFin).toISOString().split('T')[0] : '',
+      })),
+      habilidades: data.habilidades
+    }
+  }
+
+
+  public static mapToModel(data: any): User {
     const parsed = User.schema.parse(data)
     return new User(
       parsed.id,

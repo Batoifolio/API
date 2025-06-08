@@ -104,4 +104,84 @@ export class UsersController extends Controller {
       this.errorResponse(req, res, error, 'Error al eliminar el usuario', 500)
     }
   }
+
+
+  public curriculum = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id)
+      const data = req.body
+
+      // vamor a recojer los datos para hacer le curriculum
+      const titulo = data.titulo
+      const resumen = data.resumen
+      const experiencia = data.experiencia
+      const educacion = data.educacion
+      const habilidades = data.habilidades
+
+      // validamos que los datos sean correctos
+      if (!titulo || typeof titulo !== 'string') {
+        throw new ExceptionMissField('El título es obligatorio y debe ser una cadena de texto')
+      }
+      if (!resumen || typeof resumen !== 'string') {
+        throw new ExceptionMissField('El resumen es obligatorio y debe ser una cadena de texto')
+      }
+      if (!Array.isArray(experiencia)) {
+        throw new ExceptionMissField('La experiencia debe ser un array')
+      }
+      if (!Array.isArray(educacion)) {
+        throw new ExceptionMissField('La educación debe ser un array')
+      }
+      if (!Array.isArray(habilidades)) {
+        throw new ExceptionMissField('Las habilidades deben ser un array')
+      }
+
+      // creamos un objeto con los datos del curriculum
+      const curriculumData = {
+        titulo,
+        resumen,
+        experiencia: experiencia.map((exp: any) => ({
+          id: exp.id,
+          empresa: exp.empresa,
+          cargo: exp.cargo,
+          descripcion: exp.descripcion,
+          fechaInicio: exp.fechaInicio,
+          fechaFin: exp.fechaFin
+        })),
+        educacion: educacion.map((edu: any) => ({
+          id: edu.id,
+          institucion: edu.institucion,
+          titulo: edu.titulo,
+          descripcion: edu.descripcion,
+          fechaInicio: edu.fechaInicio,
+          fechaFin: edu.fechaFin
+        })),
+        habilidades
+      }
+
+      const curriculum = await this.userService.updateCurriculum(id, curriculumData)
+
+      if (curriculum != null) {
+        this.successResponse(req, res, curriculum, 'Curriculum actualizado correctamente', 200)
+      } else {
+        this.errorResponse(req, res, null, 'Curriculum no encontrado', 404)
+      }
+    } catch (error) {
+      this.errorResponse(req, res, error, 'Error al actualizar el Curriculum', 500)
+    }
+  }
+
+  public findByIdCurriculum = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id)
+      const user = await this.userService.findByIdCurriculum(id)
+
+      if (user != null) {
+        this.successResponse(req, res, user, `Curriculum del usuario ${id} obtenido correctamente`, 200)
+      } else {
+        this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
+      }
+    } catch (error) {
+      this.errorResponse(req, res, error, 'Error al obtener el usuario', 500)
+    }
+  }
 }

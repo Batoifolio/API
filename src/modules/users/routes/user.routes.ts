@@ -11,6 +11,9 @@ usersRouter.post('/', true, userController.create.bind(userController))
 usersRouter.put('/:id', true, userController.update.bind(userController))
 usersRouter.delete('/:id', true, userController.delete.bind(userController))
 
+usersRouter.get('/:id/curriculum', true, userController.findByIdCurriculum.bind(userController))
+usersRouter.put('/:id/curriculum', true, userController.curriculum.bind(userController))
+
 export default {
   path: '/users',
   router: usersRouter.router
