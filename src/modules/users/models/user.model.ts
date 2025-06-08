@@ -2,7 +2,8 @@
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
-import { UserInterface, Curriculum } from '../interfaces/user.interface'
+import { UserInterface, Curriculum, PDFData } from '../interfaces/user.interface'
+import { generarPDF } from '../utils/crearPDF'
 import { GradoInterface } from '@modules/grados/interfaces/grado.interface'
 import { RamaInterface } from '@modules/ramas/interfaces/rama.interface'
 
@@ -54,10 +55,10 @@ export class User implements UserInterface {
     buscaEmpresa: z.boolean().optional().default(true),
     visibilidad: z.boolean().default(true),
     creadoEn: z.coerce.date().default(() => new Date()),
-    borrado: z.boolean().optional().default(false),
+    borrado: z.boolean().optional().default(false)
   })
 
-  constructor(
+  constructor (
     id: number,
     nombre: string,
     apellidos: string,
@@ -105,11 +106,11 @@ export class User implements UserInterface {
     this.borrado = borrado
   }
 
-  public static async count(): Promise<number> {
+  public static async count (): Promise<number> {
     return await prisma.user.count({ where: { borrado: false } })
   }
 
-  public static async findAll(): Promise<User[]> {
+  public static async findAll (): Promise<User[]> {
     const users = await prisma.user.findMany({
       where: { borrado: false },
       orderBy: { id: 'asc' },
@@ -132,7 +133,7 @@ export class User implements UserInterface {
   //   })
   //   return (user != null) ? User.mapToModel(user) : null
   // }
-  public static async findById(id: number): Promise<User | null> {
+  public static async findById (id: number): Promise<User | null> {
     const data = await prisma.user.findFirst({
       where: { id, borrado: false },
       include: {
@@ -151,7 +152,7 @@ export class User implements UserInterface {
     return user
   }
 
-  public static async findByEmail(email: string): Promise<User | null> {
+  public static async findByEmail (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email, borrado: false },
       include: {
@@ -166,7 +167,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  public static async emailUnique(email: string): Promise<User | null> {
+  public static async emailUnique (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email },
       include: {
@@ -181,7 +182,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  public static async findByUsername(username: string): Promise<User | null> {
+  public static async findByUsername (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false },
       include: {
@@ -196,7 +197,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  public static async usernameUnique(username: string): Promise<User | null> {
+  public static async usernameUnique (username: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { username, borrado: false },
       include: {
@@ -211,12 +212,12 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  private static async hashPassword(plainPassword: string): Promise<string> {
+  private static async hashPassword (plainPassword: string): Promise<string> {
     const saltRounds = 10
     return await Promise.resolve(await bcrypt.hash(plainPassword, saltRounds))
   }
 
-  public async verifyPassword(plainPassword: string): Promise<boolean> {
+  public async verifyPassword (plainPassword: string): Promise<boolean> {
     try {
       // eslint-disable-next-line @typescript-eslint/return-await
       return await bcrypt.compare(plainPassword, this.password)
@@ -226,7 +227,7 @@ export class User implements UserInterface {
     }
   }
 
-  public static async create(data: Omit<z.infer<typeof User.schema>, 'id' | 'creadoEn' | 'ultimaConexion'>): Promise<User> {
+  public static async create (data: Omit<z.infer<typeof User.schema>, 'id' | 'creadoEn' | 'ultimaConexion'>): Promise<User> {
     const newUser = await prisma.user.create({
       data: {
         nombre: data.nombre,
@@ -253,7 +254,7 @@ export class User implements UserInterface {
     return User.mapToModel(newUser)
   }
 
-  public static async update(id: number, data: Partial<Omit<z.infer<typeof User.schema>, 'id'>>): Promise<User | null> {
+  public static async update (id: number, data: Partial<Omit<z.infer<typeof User.schema>, 'id'>>): Promise<User | null> {
     const user = await prisma.user.update({
       where: { id },
       data: {
@@ -291,7 +292,7 @@ export class User implements UserInterface {
     return user !== null && user !== undefined ? User.mapToModel(user) : null
   }
 
-  public static async delete(id: number): Promise<User | null> {
+  public static async delete (id: number): Promise<User | null> {
     const user = await prisma.user.update({
       where: { id },
       data: { borrado: true }
@@ -299,7 +300,7 @@ export class User implements UserInterface {
     return User.mapToModel(user)
   }
 
-  public static async findAllPaginate(page: number, take: number): Promise<User[]> {
+  public static async findAllPaginate (page: number, take: number): Promise<User[]> {
     const skip = (page - 1) * take
     const users = await prisma.user.findMany({
       skip,
@@ -318,20 +319,20 @@ export class User implements UserInterface {
     return users.map(user => User.mapToModel(user))
   }
 
-  public static async findByIdCurriculum(id: number): Promise<Curriculum | null> {
+  public static async findByIdCurriculum (id: number): Promise<Curriculum | null> {
     const user = await prisma.user.findFirst({
       where: { id, borrado: false },
       select: {
-        curriculum: true,
-      },
-    });
-    if (!user || !user.curriculum) {
-      return null;
+        curriculum: true
+      }
+    })
+    if ((user == null) || !user.curriculum) {
+      return null
     }
-    return User.mapToCorriculum(user.curriculum);
+    return User.mapToCorriculum(user.curriculum)
   }
 
-  public static async updateCurriculum(id: number, data: Curriculum): Promise<Curriculum | null> {
+  public static async updateCurriculum (id: number, data: Curriculum): Promise<Curriculum | null> {
     const user = await prisma.user.update({
       where: { id },
       data: {
@@ -344,7 +345,7 @@ export class User implements UserInterface {
             cargo: exp.cargo,
             descripcion: exp.descripcion,
             fechaInicio: new Date(exp.fechaInicio).toISOString(),
-            fechaFin: new Date(exp.fechaFin).toISOString(),
+            fechaFin: new Date(exp.fechaFin).toISOString()
           })),
           educacion: data.educacion.map(edu => ({
             id: edu.id,
@@ -352,17 +353,88 @@ export class User implements UserInterface {
             titulo: edu.titulo,
             descripcion: edu.descripcion,
             fechaInicio: new Date(edu.fechaInicio).toISOString(),
-            fechaFin: new Date(edu.fechaFin).toISOString(),
+            fechaFin: new Date(edu.fechaFin).toISOString()
           })),
-          habilidades: data.habilidades,
-        },
-      },
-    });
+          habilidades: data.habilidades
+        }
+      }
+    })
 
-    return user ? User.mapToCorriculum(user.curriculum) : null;
+    return user ? User.mapToCorriculum(user.curriculum) : null
   }
 
-  private static mapToCorriculum(data: any): Curriculum {
+  public static async generatePDF (id: number): Promise<void> {
+    const user = await prisma.user.findFirst({
+      where: { id, borrado: false },
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
+    })
+
+    if (user == null) {
+      throw new Error('Usuario no encontrado')
+    }
+
+    // hay que hacer un objeto PDFData
+    // const pdfData: PDFData = {
+    //   nombre: user.nombre,
+    //   apellidos: user.apellidos,
+    //   email: user.email,
+    //   pueblo: user.pueblo ?? '',
+    //   descripcion: user.descripcion ?? '',
+    //   telefono: user.telefono ?? null,
+    //   grado: user.Grado?.nombre ?? null,
+    //   rama: user.Rama?.nombre ?? null,
+    //   curriculum: User.mapToCorriculum(user.curriculum)
+    // }
+
+    const pdfData: PDFData = {
+      nombre: 'Ana',
+      apellidos: 'García López',
+      email: 'ana.garcia@centro.edu',
+      telefono: '612345678',
+      pueblo: 'Alicante',
+      grado: 'DAW',
+      rama: 'Desarrollo Web',
+      descripcion: 'Estudiante de 2° de DAW buscando oportunidad de FCT para aplicar mis conocimientos en desarrollo front-end.',
+      curriculum: {
+        resumen: 'Conocimientos en HTML, CSS, JavaScript y React. Capacidad para trabajar en equipo y aprender rápidamente.',
+        experiencia: [{
+          empresa: 'Empresa X',
+          cargo: 'Prácticas',
+          descripcion: 'Desarrollo de componentes web y mantenimiento de sitio.',
+          fechaInicio: '2024-01',
+          fechaFin: '2024-03',
+          id: ''
+        }],
+        educacion: [{
+          institucion: 'IES El Clot',
+          titulo: 'CFGS Desarrollo de Aplicaciones Web',
+          descripcion: 'Módulos destacados: Programación, Bases de Datos, Diseño de Interfaces',
+          fechaInicio: '2023',
+          fechaFin: '2025',
+          id: ''
+        }],
+        habilidades: ['HTML5', 'CSS3', 'JavaScript', 'React', 'Git'],
+        titulo: ''
+      },
+      idiomas: [{
+        nivel: 'B1',
+        idioma: 'Inglés'
+      }]
+    }
+    generarPDF(pdfData, `/app/src/modules/users/utils/curriculum-${id}.pdf`)
+    // console.log(`Curriculum PDF generado en: ${outputPath}`)
+
+    // return user ? User.mapToCorriculum(user.curriculum) : null
+  }
+
+  private static mapToCorriculum (data: any): Curriculum {
     return {
       titulo: data.titulo,
       resumen: data.resumen,
@@ -372,7 +444,7 @@ export class User implements UserInterface {
         cargo: exp.cargo,
         descripcion: exp.descripcion,
         fechaInicio: exp.fechaInicio ? new Date(exp.fechaInicio).toISOString().split('T')[0] : '',
-        fechaFin: exp.fechaFin ? new Date(exp.fechaFin).toISOString().split('T')[0] : '',
+        fechaFin: exp.fechaFin ? new Date(exp.fechaFin).toISOString().split('T')[0] : ''
       })),
       educacion: data.educacion.map((edu: any) => ({
         id: edu.id,
@@ -380,14 +452,13 @@ export class User implements UserInterface {
         titulo: edu.titulo,
         descripcion: edu.descripcion,
         fechaInicio: edu.fechaInicio ? new Date(edu.fechaInicio).toISOString().split('T')[0] : '',
-        fechaFin: edu.fechaFin ? new Date(edu.fechaFin).toISOString().split('T')[0] : '',
+        fechaFin: edu.fechaFin ? new Date(edu.fechaFin).toISOString().split('T')[0] : ''
       })),
       habilidades: data.habilidades
     }
   }
 
-
-  public static mapToModel(data: any): User {
+  public static mapToModel (data: any): User {
     const parsed = User.schema.parse(data)
     return new User(
       parsed.id,

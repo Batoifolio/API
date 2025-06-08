@@ -40,26 +40,44 @@ export interface Filter {
 }
 
 export interface Curriculum {
-  titulo: string,
-  resumen: string,
-  experiencia: [Experiencia],
-  educacion: [Educacion],
-  habilidades: [string]
+  titulo: string
+  resumen: string
+  experiencia: Experiencia[]
+  educacion: Educacion[]
+  habilidades: string[]
 }
 
 export interface Experiencia {
-  id: string,
-  empresa: string,
-  cargo: string,
-  descripcion: string,
-  fechaInicio: string,
+  id: string
+  empresa: string
+  cargo: string
+  descripcion: string
+  fechaInicio: string
   fechaFin: string
 }
 export interface Educacion {
-  id: string,
-  institucion: string,
-  titulo: string,
-  descripcion: string,
-  fechaInicio: string,
+  id: string
+  institucion: string
+  titulo: string
+  descripcion: string
+  fechaInicio: string
   fechaFin: string
+}
+
+export interface PDFData {
+  nombre: string
+  apellidos: string
+  email: string
+  pueblo: string
+  descripcion: string
+  telefono: string | null
+  grado: string | null
+  rama: string | null
+  idiomas: Idioma[] | undefined
+  curriculum: Curriculum
+}
+
+export interface Idioma {
+  nivel: string
+  idioma: string
 }
