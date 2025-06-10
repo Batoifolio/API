@@ -45,6 +45,7 @@ export interface Curriculum {
   experiencia: Experiencia[]
   educacion: Educacion[]
   habilidades: string[]
+  idiomas: Idioma[] | undefined
 }
 
 export interface Experiencia {
@@ -73,7 +74,6 @@ export interface PDFData {
   telefono: string | null
   grado: string | null
   rama: string | null
-  idiomas: Idioma[] | undefined
   curriculum: Curriculum
 }
 

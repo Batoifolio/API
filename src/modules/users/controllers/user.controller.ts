@@ -118,10 +118,10 @@ export class UsersController extends Controller {
       const habilidades = data.habilidades
 
       // validamos que los datos sean correctos
-      if (!titulo || typeof titulo !== 'string') {
+      if (titulo === undefined || titulo === null || typeof titulo !== 'string') {
         throw new ExceptionMissField('El título es obligatorio y debe ser una cadena de texto')
       }
-      if (!resumen || typeof resumen !== 'string') {
+      if (resumen === undefined || resumen === null || typeof resumen !== 'string') {
         throw new ExceptionMissField('El resumen es obligatorio y debe ser una cadena de texto')
       }
       if (!Array.isArray(experiencia)) {
@@ -138,23 +138,61 @@ export class UsersController extends Controller {
       const curriculumData = {
         titulo,
         resumen,
-        experiencia: experiencia.map((exp: any) => ({
-          id: exp.id,
-          empresa: exp.empresa,
-          cargo: exp.cargo,
-          descripcion: exp.descripcion,
-          fechaInicio: exp.fechaInicio,
-          fechaFin: exp.fechaFin
-        })),
-        educacion: educacion.map((edu: any) => ({
-          id: edu.id,
-          institucion: edu.institucion,
-          titulo: edu.titulo,
-          descripcion: edu.descripcion,
-          fechaInicio: edu.fechaInicio,
-          fechaFin: edu.fechaFin
-        })),
-        habilidades
+        experiencia: experiencia.map((exp: any) => {
+          const fechaInicio = new Date(exp.fechaInicio)
+          const fechaFin = new Date(exp.fechaFin)
+
+          if (typeof exp.empresa !== 'string' || exp.empresa.trim() === '') {
+            throw new ExceptionMissField('La empresa en la experiencia debe ser una cadena de texto')
+          }
+          if (typeof exp.cargo !== 'string' || exp.cargo.trim() === '') {
+            throw new ExceptionMissField('El cargo en la experiencia debe ser una cadena de texto')
+          }
+
+          if (fechaInicio !== undefined && fechaFin !== undefined && (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime()))) {
+            throw new ExceptionMissField(`Las fechas en la experiencia: ${exp.empresa as string} deben ser válidas`)
+          }
+
+          return {
+            id: exp.id,
+            empresa: exp.empresa,
+            cargo: exp.cargo,
+            descripcion: exp.descripcion,
+            fechaInicio: fechaInicio,
+            fechaFin: fechaFin
+          }
+        }),
+        educacion: educacion.map((edu: any) => {
+          const fechaInicio = new Date(edu.fechaInicio)
+          const fechaFin = new Date(edu.fechaFin)
+
+          if (typeof edu.institucion !== 'string' || edu.institucion.trim() === '') {
+            throw new ExceptionMissField('La institución en la educación debe ser una cadena de texto')
+          }
+          if (typeof edu.titulo !== 'string' || edu.titulo.trim() === '') {
+            throw new ExceptionMissField('El título en la educación debe ser una cadena de texto')
+          }
+
+          if (fechaInicio !== undefined && fechaFin !== undefined && (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime()))) {
+            throw new ExceptionMissField(`Las fechas en la educación: ${edu.institucion as string} deben ser válidas`)
+          }
+
+          return {
+            id: edu.id,
+            institucion: edu.institucion,
+            titulo: edu.titulo,
+            descripcion: edu.descripcion,
+            fechaInicio: fechaInicio,
+            fechaFin: fechaFin
+          }
+        }),
+        habilidades,
+        idiomas: Array.isArray(data.idiomas) ? data.idiomas.map((idioma: any) => {
+          if (typeof idioma.idioma !== 'string' || typeof idioma.nivel !== 'string') {
+            throw new ExceptionMissField('Cada idioma debe tener un idioma y un nivel')
+          }
+          return idioma
+        }) : []
       }
 
       const curriculum = await this.userService.updateCurriculum(id, curriculumData)

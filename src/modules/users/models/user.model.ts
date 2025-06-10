@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import { UserInterface, Curriculum, PDFData } from '../interfaces/user.interface'
-import { generarPDF } from '../utils/crearPDF'
+// import { generarPDF } from '../utils/crearPDF'
 import { GradoInterface } from '@modules/grados/interfaces/grado.interface'
 import { RamaInterface } from '@modules/ramas/interfaces/rama.interface'
 
@@ -355,7 +355,11 @@ export class User implements UserInterface {
             fechaInicio: new Date(edu.fechaInicio).toISOString(),
             fechaFin: new Date(edu.fechaFin).toISOString()
           })),
-          habilidades: data.habilidades
+          habilidades: data.habilidades,
+          idiomas: data.idiomas?.map(idioma => ({
+            nivel: idioma.nivel,
+            idioma: idioma.idioma
+          })) ?? []
         }
       }
     })
@@ -363,7 +367,7 @@ export class User implements UserInterface {
     return User.mapToCorriculum(user.curriculum) ?? null
   }
 
-  public static async generatePDF (id: number): Promise<void> {
+  public static async generatePDF (id: number): Promise<PDFData> {
     const user = await prisma.user.findFirst({
       where: { id, borrado: false },
       include: {
@@ -421,17 +425,17 @@ export class User implements UserInterface {
           id: ''
         }],
         habilidades: ['HTML5', 'CSS3', 'JavaScript', 'React', 'Git'],
-        titulo: ''
-      },
-      idiomas: [{
-        nivel: 'B1',
-        idioma: 'Inglés'
-      }]
+        titulo: '',
+        idiomas: [{
+          nivel: 'B1',
+          idioma: 'Inglés'
+        }]
+      }
     }
-    generarPDF(pdfData, `/app/src/modules/users/utils/curriculum-${id}.pdf`)
+    // generarPDF(pdfData, `/app/src/modules/users/utils/curriculum-${id}.pdf`)
     // console.log(`Curriculum PDF generado en: ${outputPath}`)
 
-    // return user ? User.mapToCorriculum(user.curriculum) : null
+    return pdfData
   }
 
   private static mapToCorriculum (data: any): Curriculum {
@@ -454,7 +458,11 @@ export class User implements UserInterface {
         fechaInicio: typeof edu.fechaInicio === 'string' ? new Date(edu.fechaInicio).toISOString().split('T')[0] : '',
         fechaFin: typeof edu.fechaFin === 'string' ? new Date(edu.fechaFin).toISOString().split('T')[0] : ''
       })),
-      habilidades: data.habilidades
+      habilidades: data.habilidades,
+      idiomas: Array.isArray(data.idiomas) ? data.idiomas.map((idioma: any) => ({
+        nivel: idioma.nivel,
+        idioma: idioma.idioma
+      })) : undefined
     }
   }
 

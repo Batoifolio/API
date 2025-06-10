@@ -54,7 +54,7 @@ async function main (): Promise<void> {
       apellidos: 'García López',
       username: 'ana.garcia',
       email: 'ana@example.com',
-      password: await User.hashPassword('hashedpassword1'),
+      password: await User.hashPassword('1aCa'),
       pueblo: 'Alicante',
       gradoId: grado1.id,
       ramaId: rama1.id,
@@ -71,7 +71,7 @@ async function main (): Promise<void> {
       apellidos: 'Ruiz Fernández',
       username: 'carlos.ruiz',
       email: 'carlos@example.com',
-      password: await User.hashPassword('hashedpassword2'),
+      password: await User.hashPassword('1aCa'),
       pueblo: 'Valencia',
       gradoId: grado2.id,
       ramaId: rama1.id
@@ -84,10 +84,23 @@ async function main (): Promise<void> {
       apellidos: 'Martínez Pérez',
       username: 'laura.martinez',
       email: 'laura@example.com',
-      password: 'hashedpassword3',
+      password: await User.hashPassword('1aCa'),
       pueblo: 'Madrid',
       gradoId: grado1.id,
       ramaId: rama2.id,
+      telefono: '622222222'
+    }
+  })
+  const jordi = await prisma.user.create({
+    data: {
+      nombre: 'Jordi',
+      apellidos: 'Gisbert Ferriz',
+      username: 'jordi.gisbert',
+      email: 'jordi@batoifolio.com',
+      password: await User.hashPassword('1aCa'),
+      pueblo: 'Alcoy',
+      gradoId: grado1.id,
+      ramaId: rama1.id,
       telefono: '622222222'
     }
   })
@@ -98,7 +111,9 @@ async function main (): Promise<void> {
       { userId: user1.id, preferenciaId: pref1.id },
       { userId: user1.id, preferenciaId: pref2.id },
       { userId: user2.id, preferenciaId: pref1.id },
-      { userId: user3.id, preferenciaId: pref1.id }
+      { userId: user3.id, preferenciaId: pref1.id },
+      { userId: jordi.id, preferenciaId: pref1.id },
+      { userId: jordi.id, preferenciaId: pref2.id }
     ]
   })
 
