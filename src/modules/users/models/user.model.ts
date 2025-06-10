@@ -212,7 +212,7 @@ export class User implements UserInterface {
     return (user != null) ? User.mapToModel(user) : null
   }
 
-  private static async hashPassword (plainPassword: string): Promise<string> {
+  public static async hashPassword (plainPassword: string): Promise<string> {
     const saltRounds = 10
     return await Promise.resolve(await bcrypt.hash(plainPassword, saltRounds))
   }
@@ -326,7 +326,7 @@ export class User implements UserInterface {
         curriculum: true
       }
     })
-    if ((user == null) || !user.curriculum) {
+    if (user === null || user.curriculum === undefined) {
       return null
     }
     return User.mapToCorriculum(user.curriculum)
@@ -360,7 +360,7 @@ export class User implements UserInterface {
       }
     })
 
-    return user ? User.mapToCorriculum(user.curriculum) : null
+    return User.mapToCorriculum(user.curriculum) ?? null
   }
 
   public static async generatePDF (id: number): Promise<void> {
@@ -443,16 +443,16 @@ export class User implements UserInterface {
         empresa: exp.empresa,
         cargo: exp.cargo,
         descripcion: exp.descripcion,
-        fechaInicio: exp.fechaInicio ? new Date(exp.fechaInicio).toISOString().split('T')[0] : '',
-        fechaFin: exp.fechaFin ? new Date(exp.fechaFin).toISOString().split('T')[0] : ''
+        fechaInicio: typeof exp.fechaInicio === 'string' ? new Date(exp.fechaInicio).toISOString().split('T')[0] : '',
+        fechaFin: exp.fechaFin instanceof Date ? exp.fechaFin.toISOString().split('T')[0] : ''
       })),
       educacion: data.educacion.map((edu: any) => ({
         id: edu.id,
         institucion: edu.institucion,
         titulo: edu.titulo,
         descripcion: edu.descripcion,
-        fechaInicio: edu.fechaInicio ? new Date(edu.fechaInicio).toISOString().split('T')[0] : '',
-        fechaFin: edu.fechaFin ? new Date(edu.fechaFin).toISOString().split('T')[0] : ''
+        fechaInicio: typeof edu.fechaInicio === 'string' ? new Date(edu.fechaInicio).toISOString().split('T')[0] : '',
+        fechaFin: typeof edu.fechaFin === 'string' ? new Date(edu.fechaFin).toISOString().split('T')[0] : ''
       })),
       habilidades: data.habilidades
     }

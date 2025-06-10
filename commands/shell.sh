@@ -3,4 +3,4 @@
 # Usage: sh <container_name>
 clear;
 echo "Entrando a la shell de la App";
-docker exec -it db-api-1 /bin/sh
+docker exec -it batoifolio-api-api-1 /bin/sh
