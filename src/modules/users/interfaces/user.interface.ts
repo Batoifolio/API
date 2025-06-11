@@ -78,6 +78,7 @@ export interface PDFData {
 }
 
 export interface Idioma {
+  id: string
   nivel: string
   idioma: string
 }

@@ -221,19 +221,4 @@ export class UsersController extends Controller {
       this.errorResponse(req, res, error, 'Error al obtener el usuario', 500)
     }
   }
-
-  public generatePDF = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const id = parseInt(req.params.id)
-      await this.userService.generatePDF(id)
-
-      // if (user != null) {
-      // this.successResponse(req, res, user, `Curriculum del usuario ${id} obtenido correctamente`, 200)
-      // } else {
-      this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
-      // }
-    } catch (error) {
-      this.errorResponse(req, res, error, 'Error al obtener el usuario', 500)
-    }
-  }
 }

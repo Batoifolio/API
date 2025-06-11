@@ -51,9 +51,4 @@ export class UserRepository extends Repository {
   async updateCurriculum (id: number, data: any): Promise<Curriculum | null> {
     return await User.updateCurriculum(id, data)
   }
-
-  async generatePDF (id: number): Promise<void> {
-    // return await User.updateCurriculum(id, data)
-    await User.generatePDF(id)
-  }
 }

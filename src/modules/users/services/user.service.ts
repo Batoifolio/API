@@ -97,9 +97,4 @@ export class UserService {
     }
     return curriculum
   }
-
-  async generatePDF (id: number): Promise<void> {
-    await this.userRepository.generatePDF(id)
-    // return curriculum
-  }
 }

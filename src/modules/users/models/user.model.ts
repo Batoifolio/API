@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
-import { UserInterface, Curriculum, PDFData } from '../interfaces/user.interface'
+import { UserInterface, Curriculum } from '../interfaces/user.interface'
 // import { generarPDF } from '../utils/crearPDF'
 import { GradoInterface } from '@modules/grados/interfaces/grado.interface'
 import { RamaInterface } from '@modules/ramas/interfaces/rama.interface'
@@ -357,6 +357,7 @@ export class User implements UserInterface {
           })),
           habilidades: data.habilidades,
           idiomas: data.idiomas?.map(idioma => ({
+            id: idioma.id,
             nivel: idioma.nivel,
             idioma: idioma.idioma
           })) ?? []
@@ -365,77 +366,6 @@ export class User implements UserInterface {
     })
 
     return User.mapToCorriculum(user.curriculum) ?? null
-  }
-
-  public static async generatePDF (id: number): Promise<PDFData> {
-    const user = await prisma.user.findFirst({
-      where: { id, borrado: false },
-      include: {
-        Grado: {
-          select: { id: true, nombre: true }
-        },
-        Rama: {
-          select: { id: true, nombre: true }
-        }
-      }
-    })
-
-    if (user == null) {
-      throw new Error('Usuario no encontrado')
-    }
-
-    // hay que hacer un objeto PDFData
-    // const pdfData: PDFData = {
-    //   nombre: user.nombre,
-    //   apellidos: user.apellidos,
-    //   email: user.email,
-    //   pueblo: user.pueblo ?? '',
-    //   descripcion: user.descripcion ?? '',
-    //   telefono: user.telefono ?? null,
-    //   grado: user.Grado?.nombre ?? null,
-    //   rama: user.Rama?.nombre ?? null,
-    //   curriculum: User.mapToCorriculum(user.curriculum)
-    // }
-
-    const pdfData: PDFData = {
-      nombre: 'Ana',
-      apellidos: 'García López',
-      email: 'ana.garcia@centro.edu',
-      telefono: '612345678',
-      pueblo: 'Alicante',
-      grado: 'DAW',
-      rama: 'Desarrollo Web',
-      descripcion: 'Estudiante de 2° de DAW buscando oportunidad de FCT para aplicar mis conocimientos en desarrollo front-end.',
-      curriculum: {
-        resumen: 'Conocimientos en HTML, CSS, JavaScript y React. Capacidad para trabajar en equipo y aprender rápidamente.',
-        experiencia: [{
-          empresa: 'Empresa X',
-          cargo: 'Prácticas',
-          descripcion: 'Desarrollo de componentes web y mantenimiento de sitio.',
-          fechaInicio: '2024-01',
-          fechaFin: '2024-03',
-          id: ''
-        }],
-        educacion: [{
-          institucion: 'IES El Clot',
-          titulo: 'CFGS Desarrollo de Aplicaciones Web',
-          descripcion: 'Módulos destacados: Programación, Bases de Datos, Diseño de Interfaces',
-          fechaInicio: '2023',
-          fechaFin: '2025',
-          id: ''
-        }],
-        habilidades: ['HTML5', 'CSS3', 'JavaScript', 'React', 'Git'],
-        titulo: '',
-        idiomas: [{
-          nivel: 'B1',
-          idioma: 'Inglés'
-        }]
-      }
-    }
-    // generarPDF(pdfData, `/app/src/modules/users/utils/curriculum-${id}.pdf`)
-    // console.log(`Curriculum PDF generado en: ${outputPath}`)
-
-    return pdfData
   }
 
   private static mapToCorriculum (data: any): Curriculum {
@@ -448,7 +378,7 @@ export class User implements UserInterface {
         cargo: exp.cargo,
         descripcion: exp.descripcion,
         fechaInicio: typeof exp.fechaInicio === 'string' ? new Date(exp.fechaInicio).toISOString().split('T')[0] : '',
-        fechaFin: exp.fechaFin instanceof Date ? exp.fechaFin.toISOString().split('T')[0] : ''
+        fechaFin: typeof exp.fechaFin === 'string' ? new Date(exp.fechaFin).toISOString().split('T')[0] : ''
       })),
       educacion: data.educacion.map((edu: any) => ({
         id: edu.id,
@@ -460,6 +390,7 @@ export class User implements UserInterface {
       })),
       habilidades: data.habilidades,
       idiomas: Array.isArray(data.idiomas) ? data.idiomas.map((idioma: any) => ({
+        id: idioma.id,
         nivel: idioma.nivel,
         idioma: idioma.idioma
       })) : undefined
