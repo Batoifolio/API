@@ -12,7 +12,10 @@ export class UserService {
 
   async filterAll (queryPaginate: QueryPaginate, filter: UserFilter): Promise<PaginationResult<UserInterface>> {
     const where: any = {
-      borrado: false
+      borrado: false,
+      empresaId: null,
+      buscaEmpresa: true,
+      visibilidad: true
     }
 
     if (filter.nombre !== undefined && filter.nombre.trim() !== '') {
