@@ -12,6 +12,14 @@ export class UserRepository extends Repository {
     })
   }
 
+  async filterAll (queryPaginate: QueryPaginate, where: any): Promise<PaginationResult<User>> {
+    return await this.paginate<User>({
+      queryPaginate,
+      getData: async () => await User.filterAllPaginate(queryPaginate.page, queryPaginate.limit, where),
+      getTotal: async () => await User.count()
+    })
+  }
+
   async findById (id: number): Promise<User | null> {
     return await User.findById(id)
   }

@@ -7,6 +7,10 @@ import { GradoInterface } from '../interfaces/grado.interface'
 export class GradoService {
   private readonly gradoRepository = new GradoRepository()
 
+  async getAllIds (): Promise<number[]> {
+    return await this.gradoRepository.getAllIds()
+  }
+
   async findAll (queryPaginate: QueryPaginate): Promise<PaginationResult<GradoInterface>> {
     return await this.gradoRepository.findAll(queryPaginate)
   }

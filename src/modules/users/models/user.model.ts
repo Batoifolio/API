@@ -319,6 +319,31 @@ export class User implements UserInterface {
     return users.map(user => User.mapToModel(user))
   }
 
+  public static async filterAllPaginate (
+    page: number,
+    take: number,
+    where: any
+  ): Promise<User[]> {
+    const skip = (page - 1) * take
+
+    const users = await prisma.user.findMany({
+      skip,
+      take,
+      where,
+      orderBy: { id: 'asc' },
+      include: {
+        Grado: {
+          select: { id: true, nombre: true }
+        },
+        Rama: {
+          select: { id: true, nombre: true }
+        }
+      }
+    })
+
+    return users.map(user => User.mapToModel(user))
+  }
+
   public static async findByIdCurriculum (id: number): Promise<Curriculum | null> {
     const user = await prisma.user.findFirst({
       where: { id, borrado: false },

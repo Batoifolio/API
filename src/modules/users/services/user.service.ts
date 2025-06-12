@@ -1,7 +1,7 @@
 import { PaginationResult, QueryPaginate } from '@src/types'
 import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
 import { UserRepository } from '../repositories/user.repository'
-import { UserInterface, Curriculum } from '../interfaces/user.interface'
+import { UserInterface, Curriculum, UserFilter } from '../interfaces/user.interface'
 import { GradoService } from '@src/modules/grados/services/grado.service'
 import { RamasService } from '@src/modules/ramas/services/rama.service'
 
@@ -10,8 +10,39 @@ export class UserService {
   private readonly gradoRepository = new GradoService()
   private readonly ramaRepository = new RamasService()
 
-  async filterAll (queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {
-    return await this.userRepository.findAll(queryPaginate)
+  async filterAll (queryPaginate: QueryPaginate, filter: UserFilter): Promise<PaginationResult<UserInterface>> {
+    const where: any = {
+      borrado: false
+    }
+
+    if (filter.nombre !== undefined && filter.nombre.trim() !== '') {
+      where.OR = [
+        { nombre: { contains: filter.nombre, mode: 'insensitive' } },
+        { apellidos: { contains: filter.nombre, mode: 'insensitive' } }
+      ]
+    }
+
+    if (filter.email !== undefined && filter.email.trim() !== '') {
+      where.email = { contains: filter.email, mode: 'insensitive' }
+    }
+
+    if (filter.pueblo !== undefined && filter.pueblo.trim() !== '') {
+      where.pueblo = { contains: filter.pueblo, mode: 'insensitive' }
+    }
+
+    const gradosIdsValidas = await this.gradoRepository.getAllIds()
+
+    if (filter.gradoId !== undefined && gradosIdsValidas.includes(filter.gradoId)) {
+      where.gradoId = filter.gradoId
+    }
+
+    const ramasIdsValidas = await this.ramaRepository.getAllIds()
+
+    if (filter.ramaId !== undefined && ramasIdsValidas.includes(filter.ramaId)) {
+      where.ramaId = filter.ramaId
+    }
+
+    return await this.userRepository.filterAll(queryPaginate, where)
   }
 
   async findAll (queryPaginate: QueryPaginate): Promise<PaginationResult<UserInterface>> {

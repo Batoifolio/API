@@ -38,6 +38,14 @@ export class Grado implements GradoInterface {
     return grados.map(grado => Grado.mapToModel(grado))
   }
 
+  public static async getAllIds (): Promise<number[]> {
+    const grados = await prisma.grado.findMany({
+      where: { borrado: false },
+      select: { id: true }
+    })
+    return grados.map(grado => grado.id)
+  }
+
   public static async findById (id: number): Promise<Grado | null> {
     const grado = await prisma.grado.findFirst({
       where: { id, borrado: false }

@@ -34,6 +34,14 @@ export class Rama implements RamaInterface {
     return ramas.map((rama) => Rama.mapToModel(rama))
   }
 
+  public static async getAllIds (): Promise<number[]> {
+    const ramas = await prisma.rama.findMany({
+      where: { borrado: false },
+      select: { id: true }
+    })
+    return ramas.map((rama) => rama.id)
+  }
+
   public static async findById (id: number): Promise<Rama | null> {
     const rama = await prisma.rama.findFirst({
       where: { id, borrado: false }

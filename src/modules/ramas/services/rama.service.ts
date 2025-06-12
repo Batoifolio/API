@@ -10,6 +10,10 @@ export class RamasService {
     return await this.ramasRepository.findAll(queryPaginate)
   }
 
+  async getAllIds (): Promise<number[]> {
+    return await this.ramasRepository.getAllIds()
+  }
+
   async findById (id: number): Promise<RamaInterface | null> {
     return await this.ramasRepository.findById(id)
   }

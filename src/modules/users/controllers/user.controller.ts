@@ -4,6 +4,7 @@ import { UserService } from '../services/user.service'
 import { Controller } from '@src/types/baseController'
 import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 import { User } from '../models/user.model'
+import { UserFilter } from '../interfaces/user.interface'
 
 export class UsersController extends Controller {
   private readonly userService = new UserService()
@@ -11,7 +12,15 @@ export class UsersController extends Controller {
   public filterAll = async (req: Request, res: Response): Promise<void> => {
     try {
       const queryPaginate = this.getQueryPaginate(req)
-      const { data, pagination } = await this.userService.findAll(queryPaginate)
+      const filter: UserFilter = {
+        nombre: req.query.nombre as string,
+        email: req.query.email as string,
+        pueblo: req.query.pueblo as string,
+        gradoId: req.query.gradoId !== undefined ? parseInt(req.query.gradoId as string) : undefined,
+        ramaId: req.query.ramaId !== undefined ? parseInt(req.query.ramaId as string) : undefined
+      }
+
+      const { data, pagination } = await this.userService.filterAll(queryPaginate, filter)
 
       this.successResponse(req, res, data, 'Usuarios obtenidos correctamente', 200, pagination)
     } catch (error) {

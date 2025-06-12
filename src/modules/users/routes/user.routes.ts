@@ -5,6 +5,8 @@ import { UsersController } from '../controllers/user.controller'
 const usersRouter = createBaseRouter()
 const userController = new UsersController()
 
+usersRouter.get('/filter/', true, userController.filterAll.bind(userController))
+
 usersRouter.get('/', true, userController.findAll.bind(userController))
 usersRouter.get('/:id', true, userController.findById.bind(userController))
 usersRouter.post('/', true, userController.create.bind(userController))

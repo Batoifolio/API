@@ -16,6 +16,10 @@ export class RamasRepository extends Repository {
     return await Rama.findById(id)
   }
 
+  async getAllIds (): Promise<number[]> {
+    return await Rama.getAllIds()
+  }
+
   async create (nombre: string): Promise<Rama> {
     return await Rama.create(nombre)
   }

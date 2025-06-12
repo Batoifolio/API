@@ -12,6 +12,10 @@ export class GradoRepository extends Repository {
     })
   }
 
+  async getAllIds (): Promise<number[]> {
+    return await Grado.getAllIds()
+  }
+
   async findById (id: number): Promise<Grado | null> {
     return await Grado.findById(id)
   }

@@ -30,15 +30,6 @@ export interface UserInterface {
   verifyPassword: (password: string) => Promise<boolean>
 }
 
-export interface Filter {
-  nombre?: string
-  apellidos?: string
-  username?: string
-  email?: string
-  gradoId?: number | null
-  ramaId?: number | null
-}
-
 export interface Curriculum {
   titulo: string
   resumen: string
@@ -81,4 +72,12 @@ export interface Idioma {
   id: string
   nivel: string
   idioma: string
+}
+
+export interface UserFilter {
+  nombre?: string
+  email?: string
+  pueblo?: string
+  gradoId?: number
+  ramaId?: number
 }
