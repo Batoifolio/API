@@ -65,7 +65,7 @@ model User {
   ultimaConexion DateTime           @default(now())
   rolId          Int?
   empresaId      Int?
-  buscaEmpresa   Boolean            @default(false)
+  buscaEmpresa   Boolean            @default(true)
   visibilidad    Boolean            @default(true)
   curriculum     Json?              @default("{}")
   creadoEn       DateTime           @default(now())

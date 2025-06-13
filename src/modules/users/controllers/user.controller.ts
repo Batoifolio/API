@@ -1,6 +1,7 @@
 // controllers/users.controller.ts
 import { Request, Response } from 'express'
 import { UserService } from '../services/user.service'
+import { ExceptionNotPermission } from '@src/types/baseExceptionNotPermission'
 import { Controller } from '@src/types/baseController'
 import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 import { User } from '../models/user.model'
@@ -86,13 +87,24 @@ export class UsersController extends Controller {
       if (data.ramaId !== undefined && typeof data.ramaId !== 'number') {
         throw new ExceptionMissField('ramaId debe ser un número')
       }
+      if (data.roleId !== undefined) {
+        delete data.roleId
+      }
+      if (req.user === undefined || req.user === null) {
+        throw new ExceptionMissField('Usuario no autenticado')
+      }
 
-      const user = await this.userService.update(id, data)
+      const rol = await this.userService.getRoleById(req.user)
 
-      if (user != null) {
-        this.successResponse(req, res, user, 'Usuario actualizado correctamente', 200)
+      if (req.user === id || rol === 'admin') {
+        const user = await this.userService.update(id, data)
+        if (user != null) {
+          this.successResponse(req, res, user, 'Usuario actualizado correctamente', 200)
+        } else {
+          this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
+        }
       } else {
-        this.errorResponse(req, res, null, 'Usuario no encontrado', 404)
+        throw new ExceptionNotPermission()
       }
     } catch (error) {
       this.errorResponse(req, res, error, 'Error al actualizar el usuario', 500)

@@ -152,6 +152,22 @@ export class User implements UserInterface {
     return user
   }
 
+  public static async getRoleById (id: number): Promise<string | null> {
+    const data = await prisma.user.findFirst({
+      where: { id, borrado: false },
+      include: {
+        Rol: {
+          select: { id: true, nombre: true }
+        }
+      }
+    })
+
+    if (data == null) return null
+    if (data.Rol?.nombre == null) return null
+
+    return data.Rol?.nombre
+  }
+
   public static async findByEmail (email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
       where: { email, borrado: false },

@@ -32,6 +32,12 @@ async function main (): Promise<void> {
     }
   })
 
+  const adminRole = await prisma.rol.create({
+    data: {
+      nombre: 'admin'
+    }
+  })
+
   // Insertar Usuarios
   const admin = await prisma.user.create({
     data: {
@@ -43,7 +49,8 @@ async function main (): Promise<void> {
       pueblo: 'Alicante',
       buscaEmpresa: false,
       descripcion: 'Administrar.',
-      telefono: '611111111'
+      telefono: '611111111',
+      rolId: adminRole.id
     }
   })
   console.log('Usuario administrador creado:', admin)
@@ -105,6 +112,8 @@ async function main (): Promise<void> {
     }
   })
 
+  await seedUsers(30)
+
   // Relacionar Usuarios con Preferencias
   await prisma.usersPreferencia.createMany({
     data: [
@@ -125,3 +134,41 @@ main()
     console.error(e)
     process.exit(1)
   })
+
+async function seedUsers (numero: number): Promise<void> {
+  // Aquí defines los grados y ramas que tienes creados previamente
+  const grado1 = 1
+  const rama1 = 1
+  const nombres = ['Jordi', 'Maria', 'Carlos', 'Laura', 'Pablo', 'Lucia', 'Miguel', 'Ana', 'David', 'Sara']
+  const apellidos = ['Gisbert', 'Martinez', 'Lopez', 'Garcia', 'Sanchez', 'Fernandez', 'Ruiz', 'Torres', 'Vega', 'Diaz']
+  const pueblos = ['Alcoy', 'Valencia', 'Alicante', 'Castellon', 'Elche']
+  const password = '1aCa'
+
+  for (let i = 0; i < numero; i++) {
+    const nombre = nombres[i % nombres.length]
+    const apellido1 = apellidos[i % apellidos.length]
+    const apellido2 = apellidos[Math.floor(Math.random() * apellidos.length)]
+    const username = `${nombre.toLowerCase()}.${apellido1.toLowerCase()}${i}`
+    const email = `${username}@batoifolio.com`
+    const pueblo = pueblos[i % pueblos.length]
+    const telefono = `62222${(1000 + i).toString().padStart(4, '0')}`
+
+    await prisma.user.create({
+      data: {
+        nombre,
+        apellidos: `${apellido1} ${apellido2}`,
+        username,
+        email,
+        password,
+        pueblo,
+        gradoId: grado1,
+        ramaId: rama1,
+        telefono
+      }
+    })
+
+    console.log(`Usuario ${username} creado`)
+  }
+
+  console.log('Todos los usuarios han sido creados')
+}

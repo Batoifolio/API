@@ -22,4 +22,5 @@ RUN mkdir -p /app/logs && chmod 775 /app/logs && touch /app/logs/logs.log && chm
 EXPOSE 3000
 
 # Comando por defecto para iniciar la aplicación
+CMD ["npm", "run", "seed"]
 CMD ["npm", "run", "start"]

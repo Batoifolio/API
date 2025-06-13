@@ -24,6 +24,10 @@ export class UserRepository extends Repository {
     return await User.findById(id)
   }
 
+  async getRoleById (id: number): Promise<string | null> {
+    return await User.getRoleById(id)
+  }
+
   async findByEmail (email: string): Promise<User | null> {
     return await User.findByEmail(email)
   }

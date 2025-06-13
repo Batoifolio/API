@@ -1,5 +1,6 @@
 import { PaginationResult, QueryPaginate } from '@src/types'
 import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
+import { ExceptionNotFound } from '@src/types/baseExceptionNotFound'
 import { UserRepository } from '../repositories/user.repository'
 import { UserInterface, Curriculum, UserFilter } from '../interfaces/user.interface'
 import { GradoService } from '@src/modules/grados/services/grado.service'
@@ -64,6 +65,14 @@ export class UserService {
     return await this.userRepository.findByUsername(username)
   }
 
+  async getRoleById (id: number): Promise<string | null> {
+    const role = await this.userRepository.getRoleById(id)
+    if (role == null) {
+      return null
+    }
+    return role
+  }
+
   async create (data: Partial<UserInterface>): Promise<UserInterface> {
     if ((await this.userRepository.emailUnique(data.email as string)) != null) {
       throw new ExceptionBadFormatField('Email ya existe')
@@ -88,6 +97,11 @@ export class UserService {
   }
 
   async update (id: number, data: Partial<UserInterface>): Promise<UserInterface | null> {
+    const user = await this.findById(id)
+    if (user === null) {
+      throw new ExceptionNotFound('Usuario no encontrado')
+    }
+
     await this.validated(data)
     return await this.userRepository.update(id, data)
   }
