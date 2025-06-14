@@ -14,7 +14,7 @@ export abstract class Repository {
     return {
       data,
       pagination: {
-        currentPage: queryPaginate.page,
+        currentPage: (queryPaginate.page === 0) ? 1 : queryPaginate.page,
         totalPages,
         totalItems,
         limit: queryPaginate.limit

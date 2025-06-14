@@ -16,7 +16,7 @@ export class UserRepository extends Repository {
     return await this.paginate<User>({
       queryPaginate,
       getData: async () => await User.filterAllPaginate(queryPaginate.page, queryPaginate.limit, where),
-      getTotal: async () => await User.count()
+      getTotal: async () => await User.filterCount(where)
     })
   }
 
