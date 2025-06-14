@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client'
 import { User } from '../src/modules/users/models/user.model'
 
 const prisma = new PrismaClient()
+const fotoPerfil = '/default-avatar.png'
 
 async function main (): Promise<void> {
   // Insertar Ramas
@@ -73,7 +74,8 @@ async function main (): Promise<void> {
       buscaEmpresa: false,
       descripcion: 'Administrar.',
       telefono: '611111111',
-      rolId: adminRole.id
+      rolId: adminRole.id,
+      fotoPerfil
     }
   })
   console.log('Usuario administrador creado:', admin)
@@ -90,7 +92,8 @@ async function main (): Promise<void> {
       ramaId: rama1.id,
       buscaEmpresa: false,
       descripcion: 'Estudiante de DAW interesada en prácticas.',
-      telefono: '611111111'
+      telefono: '611111111',
+      fotoPerfil
     }
   })
 
@@ -103,7 +106,8 @@ async function main (): Promise<void> {
       password: await User.hashPassword('1aCa'),
       pueblo: 'Valencia',
       gradoId: grado2.id,
-      ramaId: rama1.id
+      ramaId: rama1.id,
+      fotoPerfil
     }
   })
 
@@ -117,7 +121,8 @@ async function main (): Promise<void> {
       pueblo: 'Madrid',
       gradoId: grado1.id,
       ramaId: rama2.id,
-      telefono: '622222222'
+      telefono: '622222222',
+      fotoPerfil
     }
   })
   const jordi = await prisma.user.create({
@@ -130,7 +135,8 @@ async function main (): Promise<void> {
       pueblo: 'Alcoy',
       gradoId: grado1.id,
       ramaId: rama1.id,
-      telefono: '622222222'
+      telefono: '622222222',
+      fotoPerfil
     }
   })
 
@@ -230,6 +236,7 @@ async function seedUsers (numero: number): Promise<void> {
         email,
         password,
         pueblo,
+        fotoPerfil,
         gradoId: grado1,
         ramaId: rama1,
         telefono,
@@ -246,6 +253,7 @@ async function seedUsers (numero: number): Promise<void> {
 // el numero es los el numero de ultimos usuarios, que se les asignara una empresa aleatoria
 // que ya se han creado
 async function asignarEmpresasUsuarios (numero: number, rolId: number): Promise<void> {
+  // Obtener los usuarios a asignar
   const usuarios = await prisma.user.findMany({
     take: numero,
     orderBy: {
@@ -253,15 +261,37 @@ async function asignarEmpresasUsuarios (numero: number, rolId: number): Promise<
     }
   })
 
-  const empresas = await prisma.empresa.findMany()
+  // Obtener empresas sin usuarios asignados
+  const empresasSinUsuarios = await prisma.empresa.findMany({
+    where: {
+      Users: {
+        none: {}
+      }
+    }
+  })
 
-  for (const usuario of usuarios) {
-    const empresaAleatoria = empresas[Math.floor(Math.random() * empresas.length)]
+  if (empresasSinUsuarios.length === 0) {
+    console.log('No hay empresas disponibles sin usuarios asignados.')
+    return
+  }
+
+  // Limitamos al mínimo de usuarios o empresas disponibles
+  const totalAsignaciones = Math.min(usuarios.length, empresasSinUsuarios.length)
+
+  // Barajamos aleatoriamente las empresas
+  const empresasAleatorias = empresasSinUsuarios.sort(() => 0.5 - Math.random())
+
+  for (let i = 0; i < totalAsignaciones; i++) {
+    const usuario = usuarios[i]
+    const empresa = empresasAleatorias[i]
+    const descripcion = `Reclutador de la empresa: ${empresa.nombre}`
+
     await prisma.user.update({
       where: { id: usuario.id },
-      data: { empresaId: empresaAleatoria.id, rolId }
+      data: { empresaId: empresa.id, rolId, descripcion }
     })
-    console.log(`Usuario ${usuario.username} asignado a la empresa ${empresaAleatoria.nombre}`)
+
+    console.log(`Usuario ${usuario.username} asignado a la empresa ${empresa.nombre}`)
   }
 
   console.log('Todas las asignaciones de empresas a usuarios han sido completadas')
@@ -292,7 +322,7 @@ async function seedEmpresas (numero: number): Promise<void> {
         direccion,
         cif,
         telefono: `600${(100000 + i).toString().slice(1)}`,
-        email: `info@${nombre.toLowerCase().replace(/\s+/g, '')}.com`
+        email: `info@${nombre.toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}.com`
       }
     })
 

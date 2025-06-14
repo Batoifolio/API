@@ -15,6 +15,17 @@ export class Empresa implements EmpresaInterface {
   email: string
   creadoEn: Date
   borrado: boolean
+  User?: {
+    id: number
+    nombre: string
+    apellidos: string
+    username: string
+    email: string
+    pueblo: string | null
+    telefono?: string | null
+    fotoPerfil?: string | null
+    descripcion?: string | null
+  }
 
   static schema = z.object({
     id: z.number().int(),
@@ -25,7 +36,18 @@ export class Empresa implements EmpresaInterface {
     telefono: z.string(),
     email: z.string(),
     creadoEn: z.date().optional().default(() => new Date()),
-    borrado: z.boolean().optional().default(false)
+    borrado: z.boolean().optional().default(false),
+    Users: z.object({
+      id: z.number().int(),
+      nombre: z.string(),
+      apellidos: z.string(),
+      username: z.string(),
+      pueblo: z.string().nullable().optional(),
+      email: z.string(),
+      telefono: z.string().nullable().optional(),
+      fotoPerfil: z.string().nullable().optional(),
+      descripcion: z.string().nullable().optional()
+    }).array().optional()
   })
 
   constructor (
@@ -37,7 +59,18 @@ export class Empresa implements EmpresaInterface {
     telefono: string,
     email: string,
     creadoEn: Date,
-    borrado: boolean = false
+    borrado: boolean = false,
+    User?: {
+      id: number
+      nombre: string
+      apellidos: string
+      username: string
+      email: string
+      pueblo: string | null
+      telefono?: string | null
+      fotoPerfil?: string | null
+      descripcion?: string | null
+    }
   ) {
     this.id = id
     this.nombre = nombre
@@ -48,6 +81,7 @@ export class Empresa implements EmpresaInterface {
     this.email = email
     this.creadoEn = creadoEn
     this.borrado = borrado
+    this.User = User
   }
 
   public static async count (): Promise<number> {
@@ -57,6 +91,22 @@ export class Empresa implements EmpresaInterface {
   public static async findAll (): Promise<Empresa[]> {
     const empresas = await prisma.empresa.findMany({
       where: { borrado: false },
+      include: {
+        Users: {
+          select: {
+            id: true,
+            nombre: true,
+            apellidos: true,
+            username: true,
+            email: true,
+            pueblo: true,
+            telefono: true,
+            fotoPerfil: true,
+            descripcion: true
+          },
+          where: { borrado: false }
+        }
+      },
       orderBy: { id: 'asc' }
     })
     return empresas.map(empresa => Empresa.mapToModel(empresa))
@@ -64,7 +114,23 @@ export class Empresa implements EmpresaInterface {
 
   public static async findById (id: number): Promise<Empresa | null> {
     const empresa = await prisma.empresa.findFirst({
-      where: { id, borrado: false }
+      where: { id, borrado: false },
+      include: {
+        Users: {
+          select: {
+            id: true,
+            nombre: true,
+            apellidos: true,
+            username: true,
+            pueblo: true,
+            email: true,
+            telefono: true,
+            fotoPerfil: true,
+            descripcion: true
+          },
+          where: { borrado: false }
+        }
+      }
     })
     return (empresa != null) ? Empresa.mapToModel(empresa) : null
   }
@@ -101,7 +167,8 @@ export class Empresa implements EmpresaInterface {
     const newEmpresa = await prisma.empresa.create({
       data: {
         ...data,
-        creadoEn: new Date() // Set created date to now
+        creadoEn: new Date(), // Set created date to now
+        Users: undefined // Exclude Users from creation
       }
     })
     return Empresa.mapToModel(newEmpresa)
@@ -111,7 +178,8 @@ export class Empresa implements EmpresaInterface {
     const empresa = await prisma.empresa.update({
       where: { id },
       data: {
-        ...data
+        ...data,
+        Users: undefined
       }
 
     })
@@ -132,6 +200,22 @@ export class Empresa implements EmpresaInterface {
       skip,
       take,
       where: { borrado: false },
+      include: {
+        Users: {
+          select: {
+            id: true,
+            nombre: true,
+            apellidos: true,
+            username: true,
+            email: true,
+            pueblo: true,
+            telefono: true,
+            fotoPerfil: true,
+            descripcion: true
+          },
+          where: { borrado: false }
+        }
+      },
       orderBy: { id: 'asc' }
     })
     return empresas.map(empresa => Empresa.mapToModel(empresa))
@@ -148,7 +232,18 @@ export class Empresa implements EmpresaInterface {
       parsed.telefono,
       parsed.email,
       parsed.creadoEn,
-      parsed.borrado
+      parsed.borrado,
+      parsed.Users !== undefined && parsed.Users.length > 0 ? {
+        id: parsed.Users[0].id,
+        nombre: parsed.Users[0].nombre,
+        apellidos: parsed.Users[0].apellidos,
+        username: parsed.Users[0].username,
+        pueblo: parsed.Users[0].pueblo ?? '',
+        email: parsed.Users[0].email,
+        telefono: parsed.Users[0].telefono ?? '',
+        fotoPerfil: parsed.Users[0].fotoPerfil ?? null,
+        descripcion: parsed.Users[0].descripcion ?? ''
+      } : undefined
     )
   }
 }
