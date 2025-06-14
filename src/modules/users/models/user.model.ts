@@ -92,7 +92,8 @@ export class User implements UserInterface {
     this.gradoId = gradoId
     this.ramaId = ramaId
     this.estado = estado
-    this.fotoPerfil = fotoPerfil ?? `https://ui-avatars.com/api/?uppercase=false&name=${this.nombre}+${this.apellidos}`
+    // this.fotoPerfil = fotoPerfil ?? `https://ui-avatars.com/api/?uppercase=false&name=${this.nombre}+${this.apellidos}`
+    this.fotoPerfil = fotoPerfil ?? '/default-avatar.png'
     this.descripcion = descripcion
     this.telefono = telefono
     this.ultimaConexion = ultimaConexion
@@ -108,6 +109,10 @@ export class User implements UserInterface {
 
   public static async count (): Promise<number> {
     return await prisma.user.count({ where: { borrado: false } })
+  }
+
+  public static async filterCount (where: any): Promise<number> {
+    return await prisma.user.count({ where })
   }
 
   public static async findAll (): Promise<User[]> {
