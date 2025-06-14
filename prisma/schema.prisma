@@ -60,7 +60,7 @@ model User {
   ramaId         Int?
   estado         String             @default("conectado")
   fotoPerfil     String?
-  descripcion    String?
+  descripcion    String?            @default("Soy alumno de Batoi.")
   telefono       String?
   ultimaConexion DateTime           @default(now())
   rolId          Int?
