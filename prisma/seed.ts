@@ -177,7 +177,50 @@ async function seedUsers (numero: number): Promise<void> {
     const pueblo = pueblos[i % pueblos.length]
     const telefono = `62222${(1000 + i).toString().padStart(4, '0')}`
 
-    // const curriculum = {
+    const curriculum = {
+      titulo: `Desarrollador ${nombre} ${apellido1}`,
+      resumen: 'Desarrollador apasionado con experiencia en el diseño y desarrollo de aplicaciones web utilizando tecnologías modernas. Enfocado en ofrecer soluciones eficientes y escalables.',
+      experiencia: [
+        {
+          id: 'a12f34bc-5678-90de-1234-56789abcdef0',
+          empresa: 'Tech Solutions S.A.',
+          cargo: 'Desarrollador Backend',
+          descripcion: 'Desarrollo de APIs RESTful utilizando Node.js y Express, integración con bases de datos PostgreSQL, y trabajo en equipo bajo metodologías ágiles.',
+          fechaInicio: '2023-01-15',
+          fechaFin: '2024-12-31'
+        }
+      ],
+      educacion: [
+        {
+          id: 'b084deba-2078-4485-9c92-c199dd68da1b',
+          institucion: 'Universidad Politécnica de Valencia',
+          titulo: 'Grado en Ingeniería Informática',
+          descripcion: 'Formación en programación, estructuras de datos, bases de datos, y desarrollo de software.',
+          fechaInicio: '2020-09-01',
+          fechaFin: '2024-06-30'
+        }
+      ],
+      habilidades: [
+        'JavaScript',
+        'TypeScript',
+        'Node.js',
+        'Express',
+        'PostgreSQL',
+        'Docker'
+      ],
+      idiomas: [
+        {
+          id: 'dc599232-ddc0-4b78-a349-fdfeea488cc8',
+          nivel: 'C1',
+          idioma: 'Inglés'
+        },
+        {
+          id: '466571a0-6e77-4b16-9c30-a1b0bbdb74a9',
+          nivel: 'Nativo',
+          idioma: 'Español'
+        }
+      ]
+    }
 
     await prisma.user.create({
       data: {
@@ -189,7 +232,8 @@ async function seedUsers (numero: number): Promise<void> {
         pueblo,
         gradoId: grado1,
         ramaId: rama1,
-        telefono
+        telefono,
+        curriculum
       }
     })
 
