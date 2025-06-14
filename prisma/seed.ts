@@ -20,6 +20,17 @@ async function main (): Promise<void> {
   const pref1 = await prisma.preferencia.create({ data: { nombre: 'Remoto' } })
   const pref2 = await prisma.preferencia.create({ data: { nombre: 'Presencial' } })
 
+  const adminRole = await prisma.rol.create({
+    data: {
+      nombre: 'admin'
+    }
+  })
+  const reclutadoresRole = await prisma.rol.create({
+    data: {
+      nombre: 'reclutadores'
+    }
+  })
+
   // Insertar Empresas
   const empresa1 = await prisma.empresa.create({
     data: {
@@ -32,9 +43,21 @@ async function main (): Promise<void> {
     }
   })
 
-  const adminRole = await prisma.rol.create({
+  await prisma.user.create({
     data: {
-      nombre: 'admin'
+      nombre: 'Lorena',
+      apellidos: 'García López',
+      username: 'lorena.garcia',
+      email: 'lorenaem@example.com',
+      password: await User.hashPassword('1aCa'),
+      pueblo: 'Alicante',
+      gradoId: grado1.id,
+      ramaId: rama1.id,
+      rolId: reclutadoresRole.id,
+      empresaId: empresa1.id,
+      buscaEmpresa: false,
+      descripcion: 'Encargada de reclutamiento de Tech Solutions S.L.',
+      telefono: '611111111'
     }
   })
 
@@ -65,8 +88,7 @@ async function main (): Promise<void> {
       pueblo: 'Alicante',
       gradoId: grado1.id,
       ramaId: rama1.id,
-      empresaId: empresa1.id,
-      buscaEmpresa: true,
+      buscaEmpresa: false,
       descripcion: 'Estudiante de DAW interesada en prácticas.',
       telefono: '611111111'
     }
@@ -113,6 +135,8 @@ async function main (): Promise<void> {
   })
 
   await seedUsers(30)
+  await seedEmpresas(5)
+  await asignarEmpresasUsuarios(5, reclutadoresRole.id)
 
   // Relacionar Usuarios con Preferencias
   await prisma.usersPreferencia.createMany({
@@ -153,6 +177,8 @@ async function seedUsers (numero: number): Promise<void> {
     const pueblo = pueblos[i % pueblos.length]
     const telefono = `62222${(1000 + i).toString().padStart(4, '0')}`
 
+    // const curriculum = {
+
     await prisma.user.create({
       data: {
         nombre,
@@ -171,4 +197,63 @@ async function seedUsers (numero: number): Promise<void> {
   }
 
   console.log('Todos los usuarios han sido creados')
+}
+
+// el numero es los el numero de ultimos usuarios, que se les asignara una empresa aleatoria
+// que ya se han creado
+async function asignarEmpresasUsuarios (numero: number, rolId: number): Promise<void> {
+  const usuarios = await prisma.user.findMany({
+    take: numero,
+    orderBy: {
+      id: 'desc'
+    }
+  })
+
+  const empresas = await prisma.empresa.findMany()
+
+  for (const usuario of usuarios) {
+    const empresaAleatoria = empresas[Math.floor(Math.random() * empresas.length)]
+    await prisma.user.update({
+      where: { id: usuario.id },
+      data: { empresaId: empresaAleatoria.id, rolId }
+    })
+    console.log(`Usuario ${usuario.username} asignado a la empresa ${empresaAleatoria.nombre}`)
+  }
+
+  console.log('Todas las asignaciones de empresas a usuarios han sido completadas')
+}
+
+async function seedEmpresas (numero: number): Promise<void> {
+  // Aquí defines los grados y ramas que tienes creados previamente
+  const nombres = ['Tech Solutions S.L.', 'Innovatech S.A.', 'Global Tech Corp.', 'Future Systems Ltd.', 'Digital Ventures Inc.']
+  const sectores = ['Tecnología', 'Consultoría', 'Finanzas', 'Marketing', 'Desarrollo de Software']
+  const direcciones = ['Calle Falsa 123', 'Avenida Siempre Viva 456', 'Calle Mayor 789', 'Plaza del Sol 101', 'Calle Luna 202']
+  const usedNames = new Set()
+
+  for (let i = 0; i < numero; i++) {
+    let nombre
+    do {
+      nombre = nombres[Math.floor(Math.random() * nombres.length)]
+    } while (usedNames.has(nombre))
+    usedNames.add(nombre)
+
+    const sector = sectores[Math.floor(Math.random() * sectores.length)]
+    const direccion = direcciones[Math.floor(Math.random() * direcciones.length)]
+    const cif = String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Math.floor(10000000 + Math.random() * 90000000).toString()
+
+    await prisma.empresa.create({
+      data: {
+        nombre,
+        sector,
+        direccion,
+        cif,
+        telefono: `600${(100000 + i).toString().slice(1)}`,
+        email: `info@${nombre.toLowerCase().replace(/\s+/g, '')}.com`
+      }
+    })
+
+    console.log(`Empresa ${nombre} creada`)
+  }
+
+  console.log('Todas las empresas han sido creadas')
 }
