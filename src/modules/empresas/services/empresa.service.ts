@@ -1,6 +1,6 @@
 // services/empresa.service.ts
 import { PaginationResult, QueryPaginate } from '@src/types'
-// import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
+import { ExceptionBadFormatField } from '@src/types/baseExceptionBadFormatField'
 import { EmpresaRepository } from '../repositories/empresa.repository'
 import { EmpresaInterface } from '../interfaces/empresa.interface'
 
@@ -16,10 +16,12 @@ export class EmpresaService {
   }
 
   async create (data: Partial<EmpresaInterface>): Promise<EmpresaInterface> {
-    // TODO logic de validacion
-    // if ((await this.empresaRepository.findByEmail(data.email as string)) != null) {
-    //   throw new ExceptionBadFormatField('Email ya existe')
-    // }
+    if ((await this.empresaRepository.emailUnique(data.email as string)) != null) {
+      throw new ExceptionBadFormatField('Email ya existe')
+    }
+    if ((await this.empresaRepository.cifUnique(data.cif as string)) != null) {
+      throw new ExceptionBadFormatField('CIF ya existe')
+    }
 
     return await this.empresaRepository.create(data)
   }

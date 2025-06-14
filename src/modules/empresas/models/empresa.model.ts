@@ -7,22 +7,46 @@ const prisma = new PrismaClient()
 
 export class Empresa implements EmpresaInterface {
   id: number
-  // TODO campos de Empresa
+  nombre: string
+  cif: string
+  direccion: string
+  sector: string
+  telefono: string
+  email: string
+  creadoEn: Date
   borrado: boolean
 
   static schema = z.object({
     id: z.number().int(),
-    // TODO campos de Empresa
+    nombre: z.string(),
+    cif: z.string(),
+    direccion: z.string(),
+    sector: z.string(),
+    telefono: z.string(),
+    email: z.string(),
+    creadoEn: z.date().optional().default(() => new Date()),
     borrado: z.boolean().optional().default(false)
   })
 
   constructor (
     id: number,
-    // TODO campos de Empresa
+    nombre: string,
+    cif: string,
+    direccion: string,
+    sector: string,
+    telefono: string,
+    email: string,
+    creadoEn: Date,
     borrado: boolean = false
   ) {
     this.id = id
-    // TODO campos de Empresa
+    this.nombre = nombre
+    this.cif = cif
+    this.direccion = direccion
+    this.sector = sector
+    this.telefono = telefono
+    this.email = email
+    this.creadoEn = creadoEn
     this.borrado = borrado
   }
 
@@ -45,10 +69,39 @@ export class Empresa implements EmpresaInterface {
     return (empresa != null) ? Empresa.mapToModel(empresa) : null
   }
 
-  public static async create (data: Omit<z.infer<typeof Empresa.schema>, 'id' >): Promise<Empresa> {
+  public static async findByEmail (email: string): Promise<Empresa | null> {
+    const empresa = await prisma.empresa.findFirst({
+      where: { email, borrado: false }
+    })
+    return (empresa != null) ? Empresa.mapToModel(empresa) : null
+  }
+
+  public static async findByCIF (cif: string): Promise<Empresa | null> {
+    const empresa = await prisma.empresa.findFirst({
+      where: { cif, borrado: false }
+    })
+    return (empresa != null) ? Empresa.mapToModel(empresa) : null
+  }
+
+  public static async emailUnique (email: string): Promise<Empresa | null> {
+    const empresa = await prisma.empresa.findFirst({
+      where: { email, borrado: false }
+    })
+    return (empresa != null) ? Empresa.mapToModel(empresa) : null
+  }
+
+  public static async cifUnique (cif: string): Promise<Empresa | null> {
+    const empresa = await prisma.empresa.findFirst({
+      where: { cif, borrado: false }
+    })
+    return (empresa != null) ? Empresa.mapToModel(empresa) : null
+  }
+
+  public static async create (data: Omit<z.infer<typeof Empresa.schema>, 'id' | 'creadoEn'>): Promise<Empresa> {
     const newEmpresa = await prisma.empresa.create({
       data: {
-        // TODO campos de Empresa
+        ...data,
+        creadoEn: new Date() // Set created date to now
       }
     })
     return Empresa.mapToModel(newEmpresa)
@@ -88,7 +141,13 @@ export class Empresa implements EmpresaInterface {
     const parsed = Empresa.schema.parse(data)
     return new Empresa(
       parsed.id,
-      // TODO campos de Empresa
+      parsed.nombre,
+      parsed.cif,
+      parsed.direccion,
+      parsed.sector,
+      parsed.telefono,
+      parsed.email,
+      parsed.creadoEn,
       parsed.borrado
     )
   }

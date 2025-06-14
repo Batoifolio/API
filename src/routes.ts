@@ -8,9 +8,10 @@ import AuthRouter from '@modules/auth/routes/auth.routes'
 import GradoRouter from '@modules/grados/routes/grado.routes'
 import PreferenciaRouter from '@modules/preferencias/routes/preferencia.routes'
 import RolRouter from '@modules/rols/routes/rol.routes'
+import EmpresaRoutes from '@modules/empresas/routes/empresa.routes'
 
 // Lista centralizada de módulos
-const modules: baseRouterModule[] = [AuthRouter, RamasRouter, UsersRouter, GradoRouter, PreferenciaRouter, RolRouter]
+const modules: baseRouterModule[] = [AuthRouter, RamasRouter, UsersRouter, GradoRouter, PreferenciaRouter, RolRouter, EmpresaRoutes]
 
 // Ruta test
 const router = Router()

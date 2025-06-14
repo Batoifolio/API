@@ -34,14 +34,18 @@ export class EmpresaController extends Controller {
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { nombre } = req.body
+      const { nombre, cif, direccion, sector, telefono, email } = req.body
 
-      if (nombre != null) {
-        const empresa = await this.empresaService.create({ nombre: nombre })
-        this.successResponse(req, res, empresa, 'Empresa creada correctamente', 201)
-      } else {
-        throw new ExceptionMissField('nombre')
-      }
+      this.validateFieldsNotNullOrEmpty({ nombre, cif, direccion, sector, telefono, email })
+
+      this.validateEmail(email)
+
+      this.validateCif(cif)
+
+      this.validateTelefono(telefono)
+
+      const empresa = await this.empresaService.create({ nombre, cif, direccion, sector, telefono, email })
+      this.successResponse(req, res, empresa, 'Empresa creada correctamente', 201)
     } catch (error) {
       if (error instanceof ExceptionMissField) {
         this.errorResponse(req, res, error, error.message, error.statusCode)

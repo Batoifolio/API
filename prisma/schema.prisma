@@ -42,7 +42,7 @@ model Empresa {
   direccion String
   sector    String
   telefono  String
-  email     String
+  email     String   @unique
   creadoEn  DateTime @default(now())
   borrado   Boolean  @default(false)
   Users     User[]

@@ -1,5 +1,6 @@
 import { Pagination, QueryPaginate } from '@src/types'
 import { Exception } from '@src/types/baseException'
+import { ExceptionMissField } from '@src/types/baseExceptionMissField'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
@@ -111,5 +112,28 @@ export abstract class Controller {
       throw new Error('JWT_EXPIRES_IN is not defined')
     }
     return jwt.sign({ userId }, JWT_SECRET, { expiresIn: Number(JWT_EXPIRES_IN) })
+  }
+
+  protected validateFieldsNotNullOrEmpty (fields: Record<string, any>): void {
+    for (const [key, value] of Object.entries(fields)) {
+      if (value === undefined || value === null || value === '') {
+        throw new ExceptionMissField(key)
+      }
+    }
+  }
+
+  protected validateTelefono (telefono: string): boolean {
+    const telefonoRegex = /^\d{9}$/ // Formato español: 9 dígitos
+    return telefonoRegex.test(telefono)
+  }
+
+  protected validateEmail (email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/ // Formato de email básico
+    return emailRegex.test(email)
+  }
+
+  protected validateCif (cif: string): boolean {
+    const cifRegex = /^[A-Z]{1}[0-9]{7}[0-9A-J]$/ // Formato de CIF español
+    return cifRegex.test(cif)
   }
 }

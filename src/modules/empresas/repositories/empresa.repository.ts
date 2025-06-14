@@ -16,6 +16,22 @@ export class EmpresaRepository extends Repository {
     return await Empresa.findById(id)
   }
 
+  async findByEmail (email: string): Promise<Empresa | null> {
+    return await Empresa.findByEmail(email)
+  }
+
+  async findByCIF (cif: string): Promise<Empresa | null> {
+    return await Empresa.findByCIF(cif)
+  }
+
+  async emailUnique (email: string): Promise<Empresa | null> {
+    return await Empresa.emailUnique(email)
+  }
+
+  async cifUnique (cif: string): Promise<Empresa | null> {
+    return await Empresa.cifUnique(cif)
+  }
+
   async create (data: any): Promise<Empresa> {
     return await Empresa.create(data)
   }
