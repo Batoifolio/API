@@ -142,7 +142,7 @@ async function seedUsers (numero: number): Promise<void> {
   const nombres = ['Jordi', 'Maria', 'Carlos', 'Laura', 'Pablo', 'Lucia', 'Miguel', 'Ana', 'David', 'Sara']
   const apellidos = ['Gisbert', 'Martinez', 'Lopez', 'Garcia', 'Sanchez', 'Fernandez', 'Ruiz', 'Torres', 'Vega', 'Diaz']
   const pueblos = ['Alcoy', 'Valencia', 'Alicante', 'Castellon', 'Elche']
-  const password = '1aCa'
+  const password = await User.hashPassword('1aCa')
 
   for (let i = 0; i < numero; i++) {
     const nombre = nombres[i % nombres.length]
